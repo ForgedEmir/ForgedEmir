@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.svg" width="100%" alt="Emir Makhtsaev · Applied AI, Agents and Cloud">
+  <img src="assets/banner.webp" width="100%" alt="Emir Makhtsaev · Applied AI, Agents and Cloud. A 3D globe with data flowing from Liège to the world.">
 </p>
 
 <p align="center">
@@ -63,5 +63,5 @@ emir = {
 <br>
 
 <p align="center">
-  <sub>Final year @ HELMo · Open to internships for 2027 · Let's talk on <a href="https://www.linkedin.com/in/emir-makhtsaev-0b97283a0/">LinkedIn</a></sub>
+  <sub>Banner rendered frame by frame with <a href="banner/">Three.js</a> · Final year @ HELMo · Open to internships for 2027 · Let's talk on <a href="https://www.linkedin.com/in/emir-makhtsaev-0b97283a0/">LinkedIn</a></sub>
 </p>
