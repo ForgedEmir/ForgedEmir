@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner.webp" width="100%" alt="Emir Makhtsaev · Applied AI, Agents and Cloud. Sunrise over Earth at night, with data flowing from Liège to the world.">
+  <img src="assets/banner-sunrise.webp" width="100%" alt="Emir Makhtsaev · Applied AI, Agents and Cloud. Sunrise over Earth at night, with data flowing from Liège to the world.">
 </p>
 
 <p align="center">
