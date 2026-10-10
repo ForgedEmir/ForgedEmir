@@ -1,0 +1,93 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Principles</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+  #stage { width: 1200px; height: 330px; }
+  .grid { position: absolute; left: 22px; top: 22px; right: 22px; bottom: 22px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .tile { position: relative; border-radius: 16px; background: var(--panel); box-shadow: inset 0 0 0 1px var(--line); padding: 22px 22px 18px; overflow: hidden; }
+  .tile .num { font: 700 13px 'JetBrains Mono', monospace; color: var(--copper); letter-spacing: .14em; }
+  .tile canvas { position: absolute; right: 16px; top: 16px; }
+  .tile h3 { margin: 94px 0 8px; font: 700 21px/1.15 'Space Grotesk', sans-serif; letter-spacing: -.01em; }
+  .tile p { margin: 0; font: 400 13.5px/1.45 'Inter', sans-serif; color: var(--muted); }
+  .tile .where { position: absolute; left: 22px; bottom: 16px; font: 500 11px 'JetBrains Mono', monospace; color: var(--cyan); letter-spacing: .04em; }
+  .tile .hl { position: absolute; inset: 0; border-radius: 16px; pointer-events: none; }
+</style></head>
+<body>
+<div id="stage">
+  <div class="dots"></div>
+  <div class="orb" id="o1" style="width:380px;height:380px;background:#c47a2c;"></div>
+  <div class="orb" id="o2" style="width:420px;height:420px;background:#1f5f8a;"></div>
+  <div class="grid" id="grid"></div>
+  <div class="sheen" id="sheen"></div>
+</div>
+<script>
+const T = 8, TAU = Math.PI * 2, DPR = window.devicePixelRatio || 1;
+const P = [
+  ['01', 'Every answer has a source.', 'If the AI cannot point to where it found it, it should not say it.', '→ Accounting RAG'],
+  ['02', 'The model perceives, rules decide.', 'AI reads the evidence. Fixed, testable rules make the call.', '→ PARALLAX'],
+  ['03', "Reproducible or it didn't happen.", 'Versioned data, tracked runs: same input, same result.', '→ NeuroSpark'],
+  ['04', 'Every loop has a budget.', 'Agents get hard limits on cost, requests and time.', '→ Research agents'],
+];
+const grid = document.getElementById('grid');
+grid.innerHTML = P.map(([n, h, p, w], i) => `<div class="tile"><div class="num">${n}</div><canvas id="c${i}"></canvas><h3>${h}</h3><p>${p}</p><div class="where">${w}</div><div class="hl" id="h${i}"></div></div>`).join('');
+const S = 96;
+const ctx = [0, 1, 2, 3].map((i) => { const c = document.getElementById('c' + i); c.width = S * DPR; c.height = S * DPR; c.style.width = S + 'px'; c.style.height = S + 'px'; const g = c.getContext('2d'); g.scale(DPR, DPR); return g; });
+const CU = (a) => `rgba(255,207,148,${a})`, CY = (a) => `rgba(111,195,255,${a})`, GR = (a) => `rgba(95,211,154,${a})`;
+function rr(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+function dot(g, x, y, r, c) { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, c(0.95)); gr.addColorStop(1, c(0)); g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); }
+
+const icons = [
+  (g, u, on) => { // document -> citation
+    rr(g, 10, 14, 40, 52, 6); g.fillStyle = '#0f2233'; g.fill(); g.strokeStyle = 'rgba(150,190,215,.35)'; g.stroke();
+    for (let i = 0; i < 5; i++) { g.fillStyle = i === 2 ? CU(0.9) : 'rgba(159,182,197,.3)'; g.fillRect(17, 24 + i * 8, i === 2 ? 26 : 22 + (i % 2) * 4, 3); }
+    rr(g, 52, 44, 36, 26, 8); g.fillStyle = '#0f2233'; g.fill(); g.strokeStyle = CY(0.6); g.stroke();
+    g.font = '600 11px "JetBrains Mono"'; g.fillStyle = CY(1); g.fillText('[1]', 59, 61);
+    g.strokeStyle = 'rgba(227,168,98,.4)'; g.setLineDash([3, 3]); g.beginPath(); g.moveTo(43, 41); g.quadraticCurveTo(60, 30, 66, 44); g.stroke(); g.setLineDash([]);
+    const p = (u * 2) % 1; const x = (1 - p) * (1 - p) * 43 + 2 * (1 - p) * p * 60 + p * p * 66, y = (1 - p) * (1 - p) * 41 + 2 * (1 - p) * p * 30 + p * p * 44; dot(g, x, y, 7, CU);
+  },
+  (g, u, on) => { // eye -> shield
+    g.strokeStyle = CY(0.85); g.lineWidth = 2; g.beginPath(); g.moveTo(8, 34); g.quadraticCurveTo(24, 18, 40, 34); g.quadraticCurveTo(24, 50, 8, 34); g.stroke();
+    g.fillStyle = CY(0.9); g.beginPath(); g.arc(24, 34, 5, 0, TAU); g.fill();
+    const s = 0.5 + 0.5 * Math.sin(TAU * u * 2);
+    g.beginPath(); g.moveTo(68, 18); g.lineTo(86, 25); g.lineTo(86, 42); g.quadraticCurveTo(86, 58, 68, 66); g.quadraticCurveTo(50, 58, 50, 42); g.lineTo(50, 25); g.closePath();
+    g.fillStyle = GR(0.12 + s * 0.15); g.fill(); g.strokeStyle = GR(0.6 + s * 0.4); g.lineWidth = 2; g.stroke();
+    g.strokeStyle = GR(1); g.lineWidth = 2.5; g.beginPath(); g.moveTo(60, 42); g.lineTo(66, 48); g.lineTo(77, 35); g.stroke();
+    const p = (u * 2) % 1; dot(g, 42 + p * 8, 34 + p * 6, 6, CU); g.lineWidth = 1;
+  },
+  (g, u, on) => { // rotating loop
+    g.save(); g.translate(48, 44); g.rotate(TAU * u);
+    g.strokeStyle = CU(0.85); g.lineWidth = 3; g.beginPath(); g.arc(0, 0, 24, 0.3, Math.PI - 0.3); g.stroke(); g.beginPath(); g.arc(0, 0, 24, Math.PI + 0.3, TAU - 0.3); g.stroke();
+    g.fillStyle = CU(0.95); [[Math.PI - 0.3, 1], [TAU - 0.3, 1]].forEach(([a]) => { const x = Math.cos(a) * 24, y = Math.sin(a) * 24; g.save(); g.translate(x, y); g.rotate(a + Math.PI / 2); g.beginPath(); g.moveTo(0, -6); g.lineTo(7, 2); g.lineTo(-5, 4); g.closePath(); g.fill(); g.restore(); });
+    g.restore(); g.lineWidth = 1;
+    g.font = '700 12px "JetBrains Mono"'; g.fillStyle = CY(0.95); g.textAlign = 'center'; g.fillText('v1', 48, 48); g.textAlign = 'left';
+  },
+  (g, u, on) => { // budget gauge
+    const cx = 48, cy = 58, r = 32;
+    g.lineWidth = 7; g.lineCap = 'round';
+    g.strokeStyle = 'rgba(150,190,215,.18)'; g.beginPath(); g.arc(cx, cy, r, Math.PI, TAU); g.stroke();
+    const lim = Math.PI + Math.PI * 0.78;
+    g.strokeStyle = 'rgba(255,107,107,.7)'; g.beginPath(); g.arc(cx, cy, r, lim, TAU); g.stroke();
+    const v = 0.5 + 0.5 * Math.sin(TAU * u * 2 - Math.PI / 2);          // 0..1
+    const a = Math.PI + Math.PI * Math.min(0.78, 0.15 + v * 0.75);
+    g.strokeStyle = CU(0.9); g.beginPath(); g.arc(cx, cy, r, Math.PI, a); g.stroke();
+    g.lineWidth = 2.5; g.strokeStyle = '#eef4f8'; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(a) * (r - 8), cy + Math.sin(a) * (r - 8)); g.stroke();
+    g.lineCap = 'butt'; g.lineWidth = 1;
+    const hit = 0.15 + v * 0.75 >= 0.78;
+    g.font = '700 10px "JetBrains Mono"'; g.textAlign = 'center'; g.fillStyle = hit ? 'rgba(255,107,107,1)' : 'rgba(159,182,197,.7)'; g.fillText(hit ? 'STOP' : 'LIMIT', cx, cy + 16); g.textAlign = 'left';
+  },
+];
+window.renderAt = (t) => {
+  const u = t / T;
+  ctx.forEach((g, i) => { g.clearRect(0, 0, S, S); icons[i](g, u); });
+  for (let i = 0; i < 4; i++) {
+    const ph = (u * 4 - i + 4) % 4; const k = ph < 1 ? Math.sin(Math.PI * ph) : 0;
+    document.getElementById('h' + i).style.boxShadow = `inset 0 0 0 1px rgba(227,168,98,${0.08 + k * 0.5}), 0 0 ${k * 30}px rgba(227,168,98,${k * 0.18})`;
+  }
+  document.getElementById('o1').style.transform = `translate(${-120 + 60 * Math.cos(0)}px, ${-200 + 40 * Math.sin(0)}px)`;
+  document.getElementById('o2').style.transform = `translate(${880 + 60 * Math.cos(0 + 2)}px, ${40 + 40 * Math.sin(0 + 2)}px)`;
+  document.getElementById('sheen').style.left = `${-220 + (1200 + 440) * u}px`;
+  return true;
+};
+document.fonts.ready.then(() => { window.renderAt(Number(new URLSearchParams(location.search).get('t') || 0)); window.__ready = true; });
+</script>
+</body></html>

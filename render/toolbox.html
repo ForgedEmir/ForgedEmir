@@ -1,0 +1,51 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Toolbox</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+  #stage { width: 1200px; height: 380px; }
+  .rows { position: absolute; left: 22px; right: 22px; top: 22px; bottom: 22px; display: grid; grid-template-rows: repeat(4, 1fr); gap: 10px; }
+  .row { position: relative; display: flex; align-items: center; border-radius: 14px; background: var(--panel); box-shadow: inset 0 0 0 1px var(--line); padding: 0 18px; overflow: hidden; }
+  .row .lab { width: 200px; flex: none; }
+  .row .lab b { display: block; font: 700 17px 'Space Grotesk', sans-serif; color: var(--text); }
+  .row .lab span { font: 500 10.5px 'JetBrains Mono', monospace; letter-spacing: .18em; color: var(--dim); }
+  .tools { display: flex; gap: 12px; }
+  .tool { display: flex; align-items: center; gap: 10px; height: 46px; padding: 0 16px 0 12px; border-radius: 12px; background: rgba(8,18,28,.8); box-shadow: inset 0 0 0 1px var(--line); }
+  .ico { width: 24px; height: 24px; flex: none; -webkit-mask-size: contain; -webkit-mask-repeat: no-repeat; -webkit-mask-position: center; mask-size: contain; mask-repeat: no-repeat; mask-position: center; }
+  .glyph { width: 24px; height: 24px; display: grid; place-items: center; font: 700 15px 'JetBrains Mono', monospace; }
+  .tool em { font: 500 13.5px 'Inter', sans-serif; font-style: normal; color: #dfe9ef; }
+</style></head>
+<body>
+<div id="stage">
+  <div class="dots"></div>
+  <div class="orb" id="o1" style="width:360px;height:360px;background:#c47a2c;"></div>
+  <div class="orb" id="o2" style="width:420px;height:420px;background:#1f5f8a;"></div>
+  <div class="rows" id="rows"></div>
+  <div class="sheen" id="sheen"></div>
+</div>
+<script>
+const T = 6, TAU = Math.PI * 2;
+const SI = (s) => `https://cdn.jsdelivr.net/npm/simple-icons@13.21.0/icons/${s}.svg`;
+const G = [
+  ['AI & agents', 'AGENTIC', [['glyph', '⇄', '#ffcf94', 'MCP'], ['glyph', 'H', '#e3a862', 'Hermes Agent'], ['n8n', '#EA4B71', 'n8n'], ['anthropic', '#e8d5c0', 'Claude Code']]],
+  ['Data & ML', 'PIPELINES', [['python', '#5A9FD4', 'Python'], ['apachespark', '#E25A1C', 'PySpark'], ['mlflow', '#2AA8F2', 'MLflow'], ['dvc', '#13ADC7', 'DVC'], ['postgresql', '#6C9BD2', 'PostgreSQL']]],
+  ['Build', 'APIS & APPS', [['fastapi', '#1BC5B0', 'FastAPI'], ['typescript', '#4C9BEB', 'TypeScript'], ['react', '#61DAFB', 'React'], ['git', '#F05032', 'Git'], ['githubactions', '#4C9BFF', 'GitHub Actions']]],
+  ['Cloud & ops', 'RUN IT', [['docker', '#2496ED', 'Docker'], ['linux', '#FCC624', 'Linux'], ['redis', '#FF5B4F', 'Redis'], ['supabase', '#3FCF8E', 'Supabase'], ['railway', '#E6EEF3', 'Railway']]],
+];
+document.getElementById('rows').innerHTML = G.map(([name, sub, tools], r) => `<div class="row"><div class="lab"><span>${sub}</span><b>${name}</b></div><div class="tools">${tools.map((t, i) => {
+  const ic = t[0] === 'glyph' ? `<div class="glyph" style="color:${t[2]}">${t[1]}</div>` : `<div class="ico" style="background:${t[1]};-webkit-mask-image:url(${SI(t[0])});mask-image:url(${SI(t[0])})"></div>`;
+  return `<div class="tool" id="t${r}_${i}">${ic}<em>${t[0] === 'glyph' ? t[3] : t[2]}</em></div>`;
+}).join('')}</div></div>`).join('');
+window.renderAt = (t) => {
+  const u = t / T;
+  G.forEach(([, , tools], r) => tools.forEach((_, i) => {
+    const ph = ((u * 2 - i * 0.08 - r * 0.12) % 1 + 1) % 1; const k = ph < 0.2 ? Math.sin(Math.PI * ph / 0.2) : 0;
+    document.getElementById(`t${r}_${i}`).style.boxShadow = `inset 0 0 0 1px rgba(227,168,98,${0.1 + k * 0.55}), 0 0 ${k * 22}px rgba(227,168,98,${k * 0.25})`;
+  }));
+  document.getElementById('o1').style.transform = `translate(${-100 + 60 * Math.cos(0)}px, ${-180 + 40 * Math.sin(0)}px)`;
+  document.getElementById('o2').style.transform = `translate(${900 + 60 * Math.cos(0 + 2)}px, ${80 + 40 * Math.sin(0 + 2)}px)`;
+  document.getElementById('sheen').style.left = `${-220 + (1200 + 440) * u}px`;
+  return true;
+};
+Promise.all([document.fonts.ready, new Promise((r) => setTimeout(r, 1500))]).then(() => { window.renderAt(Number(new URLSearchParams(location.search).get('t') || 0)); window.__ready = true; });
+</script>
+</body></html>

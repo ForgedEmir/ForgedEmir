@@ -8,8 +8,8 @@ const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 const here = __dirname.replace(/\\/g, '/');
 const [outDir, framesArg = '200', fpsArg = '25', singleT] = process.argv.slice(2);
 const FRAMES = Number(framesArg), FPS = Number(fpsArg);
-const W = 1600, H = 520, PORT = 9333;
-const SCENE = process.env.SCENE || "scene.html", DPR = Number(process.env.DPR || 1), QS = process.env.QS || '';
+const W = Number(process.env.W || 1600), H = Number(process.env.H || 520), PORT = 9333;
+const SCENE = process.env.SCENE || 'scene.html', DPR = Number(process.env.DPR || 1), QS = process.env.QS || '';
 fs.mkdirSync(outDir, { recursive: true });
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -56,7 +56,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     await sleep(300);
   }
   console.log('info:', JSON.stringify(await evalJs('window.__info || null')));
-  console.log('gl:', await evalJs(`(() => { const g = document.getElementById('gl').getContext('webgl2'); const d = g && g.getExtension('WEBGL_debug_renderer_info'); return d ? g.getParameter(d.UNMASKED_RENDERER_WEBGL) : 'n/a'; })()`));
+  console.log('gl:', await evalJs(`(() => { const c = document.getElementById('gl'); if (!c) return 'no webgl canvas'; const g = c.getContext('webgl2'); const d = g && g.getExtension('WEBGL_debug_renderer_info'); return d ? g.getParameter(d.UNMASKED_RENDERER_WEBGL) : 'n/a'; })()`));
 
   const list = singleT !== undefined ? [Number(singleT)] : Array.from({ length: FRAMES }, (_, i) => i / FPS);
   const start = Date.now();

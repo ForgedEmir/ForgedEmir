@@ -1,0 +1,240 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Card</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+  #stage { width: 600px; height: 300px; }
+  #art { position: absolute; left: 0; top: 0; }
+  .fade { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(4,9,15,1) 0%, rgba(4,9,15,.96) 42%, rgba(4,9,15,.35) 62%, rgba(4,9,15,0) 75%); pointer-events: none; }
+  .txt { position: absolute; left: 30px; top: 28px; width: 300px; }
+  .title { font: 700 31px/1.05 'Space Grotesk', sans-serif; margin: 14px 0 10px; letter-spacing: -.01em; }
+  .desc { font: 400 14.5px/1.5 'Inter', sans-serif; color: var(--muted); }
+  .chips { position: absolute; left: 30px; bottom: 24px; display: flex; gap: 7px; z-index: 5; }
+  .stat { position: absolute; right: 24px; top: 26px; font: 500 11.5px 'JetBrains Mono', monospace; letter-spacing: .2em; color: var(--copper); z-index: 5; text-shadow: 0 0 12px rgba(227,168,98,.5); }
+</style></head>
+<body>
+<div id="stage">
+  <canvas id="art"></canvas>
+  <div class="fade"></div>
+  <div class="txt"><div class="kicker" id="kicker"></div><div class="title" id="title"></div><div class="desc" id="desc"></div></div>
+  <div class="stat" id="stat"></div>
+  <div class="chips" id="chips"></div>
+  <div class="sheen" id="sheen"></div>
+</div>
+<script type="module">
+import * as topojson from 'https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/+esm';
+const W = 600, H = 300, T = 6, TAU = Math.PI * 2, DPR = window.devicePixelRatio || 1;
+const card = new URLSearchParams(location.search).get('card') || 'rag';
+const C = { copper: '#e3a862', copper2: '#ffcf94', blue: '#77a8c3', cyan: '#6fc3ff', green: '#5fd39a', amber: '#ffb347', text: '#eef4f8', muted: '#9fb6c5', dim: '#5d7d91', panel: '#0c1a28', line: 'rgba(150,190,215,.16)' };
+const cv = document.getElementById('art'); cv.width = W * DPR; cv.height = H * DPR; cv.style.width = W + 'px'; cv.style.height = H + 'px';
+const g = cv.getContext('2d'); g.scale(DPR, DPR);
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = (x) => { x = clamp(x); return x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2; };
+const seg = (t, a, b) => clamp((t - a) / (b - a));
+function rr(x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+function glow(x, y, r, col, a = 1) { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, col.replace('A', a)); gr.addColorStop(1, col.replace('A', 0)); g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, TAU); g.fill(); }
+const CU = 'rgba(255,207,148,A)', CY = 'rgba(111,195,255,A)', GR = 'rgba(95,211,154,A)', AM = 'rgba(255,179,71,A)';
+
+const META = {
+  rag: { k: 'Team project', s: 'MAIN CONTRIBUTOR', t: 'Accounting RAG', d: 'Sourced answers on tax law, accounting standards and Peppol, streamed in real time.', c: ['FastAPI', 'Qdrant', 'Redis', 'Supabase', 'Docker', 'MCP'] },
+  parallax: { k: 'Hermes × NVIDIA × Stripe', s: 'HACKATHON 2026', t: 'PARALLAX', d: 'AI agents must prove the physical world matches the plan before a workflow continues.', c: ['Hermes Agent', 'MCP', 'NVIDIA NIM', 'TypeScript', 'React'] },
+  neuro: { k: 'Big data', s: '109 SUBJECTS · 1,308 FILES', t: 'NeuroSpark', d: 'Distributed EEG pipeline: ingestion, features, training and evaluation, fully reproducible.', c: ['PySpark', 'MLlib', 'Kedro', 'MLflow', 'DVC'] },
+  carwatch: { k: 'Personal project', s: 'REAL-TIME', t: 'CarWatch', d: 'Watches three Belgian car marketplaces in parallel, scores every deal and sends instant alerts.', c: ['FastAPI', 'PostgreSQL', 'Telegram', 'Railway'] },
+}[card];
+document.getElementById('kicker').textContent = META.k;
+document.getElementById('stat').textContent = META.s;
+document.getElementById('title').textContent = META.t;
+document.getElementById('desc').textContent = META.d;
+document.getElementById('chips').innerHTML = META.c.map((c) => `<span class="chip">${c}</span>`).join('');
+
+// ---------- RAG ----------
+function drawRag(t) {
+  const ox = 318;
+  // documents
+  for (let d = 2; d >= 0; d--) {
+    const x = ox + 20 + d * 16, y = 46 + d * 12;
+    g.save(); g.translate(x + 60, y + 75); g.rotate((d - 1) * 0.06); g.translate(-(x + 60), -(y + 75));
+    rr(x, y, 120, 150, 10); g.fillStyle = d === 0 ? '#0f2233' : '#0b1a28'; g.fill(); g.strokeStyle = C.line; g.lineWidth = 1; g.stroke();
+    if (d === 0) {
+      g.fillStyle = 'rgba(159,182,197,.6)'; g.fillRect(x + 14, y + 16, 54, 6);
+      for (let i = 0; i < 9; i++) {
+        const ly = y + 34 + i * 12, lw = [88, 80, 92, 70, 86, 90, 64, 84, 76][i];
+        const hl = (i === 2 && t > 0.5) || (i === 6 && t > 1.0);
+        const scanY = y + 30 + seg(t, 0.1, 1.5) * 112;
+        const near = Math.abs(scanY - ly) < 8 && t < 1.6;
+        g.fillStyle = hl ? 'rgba(227,168,98,.95)' : near ? 'rgba(111,195,255,.8)' : 'rgba(159,182,197,.22)';
+        if (hl) { g.shadowColor = 'rgba(227,168,98,.8)'; g.shadowBlur = 10; }
+        g.fillRect(x + 14, ly, lw, 4); g.shadowBlur = 0;
+      }
+      if (t < 1.6) { const sy = y + 30 + seg(t, 0.1, 1.5) * 112; g.fillStyle = 'rgba(111,195,255,.18)'; g.fillRect(x + 6, sy - 7, 108, 14); g.fillStyle = 'rgba(111,195,255,.9)'; g.fillRect(x + 6, sy, 108, 1.5); }
+    }
+    g.restore();
+  }
+  // answer bubble
+  const bx = ox + 118, by = 136, bw = 150, bh = 92;
+  const ap = ease(seg(t, 2.6, 3.1)) * (1 - ease(seg(t, 5.4, 5.9)));
+  // flying passages
+  for (const [i, delay] of [[2, 0], [6, 0.25]]) {
+    const p = ease(seg(t, 1.5 + delay, 2.7 + delay));
+    if (p > 0 && p < 1) {
+      const sx = ox + 34 + 50, sy = 46 + 34 + i * 12, ex = bx + 30, ey = by + 30;
+      const cx = (sx + ex) / 2 + 40, cy = Math.min(sy, ey) - 30;
+      const x = (1 - p) * (1 - p) * sx + 2 * (1 - p) * p * cx + p * p * ex, y = (1 - p) * (1 - p) * sy + 2 * (1 - p) * p * cy + p * p * ey;
+      glow(x, y, 16, CU, 0.9); g.fillStyle = '#fff3e2'; g.beginPath(); g.arc(x, y, 2.6, 0, TAU); g.fill();
+    }
+  }
+  if (ap > 0) {
+    g.globalAlpha = ap;
+    g.save(); g.translate(0, (1 - ap) * 10);
+    rr(bx, by, bw, bh, 12); g.fillStyle = 'rgba(14,32,48,.95)'; g.fill(); g.strokeStyle = 'rgba(227,168,98,.55)'; g.lineWidth = 1.2; g.stroke();
+    g.font = '500 10px "JetBrains Mono"'; g.fillStyle = C.copper; g.fillText('ANSWER', bx + 12, by + 18);
+    const lines = [110, 122, 92];
+    lines.forEach((lw, i) => { const p = seg(t, 3.0 + i * 0.35, 3.4 + i * 0.35); g.fillStyle = 'rgba(238,244,248,.75)'; g.fillRect(bx + 12, by + 30 + i * 11, lw * p, 4); });
+    [['[1] Art. 21', 0], ['[2] Peppol BIS', 1]].forEach(([s, i]) => {
+      const p = ease(seg(t, 4.1 + i * 0.3, 4.4 + i * 0.3)); if (p <= 0) return;
+      const cx = bx + 12 + i * 66, cy = by + 66; g.globalAlpha = ap * p;
+      rr(cx, cy, i ? 74 : 58, 16, 8); g.fillStyle = 'rgba(111,195,255,.14)'; g.fill(); g.strokeStyle = 'rgba(111,195,255,.5)'; g.stroke();
+      g.font = '500 9px "JetBrains Mono"'; g.fillStyle = C.cyan; g.fillText(s, cx + 6, cy + 11); g.globalAlpha = ap;
+    });
+    g.restore(); g.globalAlpha = 1;
+  }
+}
+
+// ---------- PARALLAX ----------
+function drawParallax(t) {
+  const cx = 462, cy = 140;
+  // box (isometric)
+  const s = 40;
+  const top = [[cx, cy - s], [cx + s * 1.2, cy - s * 0.4], [cx, cy + s * 0.2], [cx - s * 1.2, cy - s * 0.4]];
+  const left = [[cx - s * 1.2, cy - s * 0.4], [cx, cy + s * 0.2], [cx, cy + s * 1.35], [cx - s * 1.2, cy + s * 0.75]];
+  const right = [[cx + s * 1.2, cy - s * 0.4], [cx, cy + s * 0.2], [cx, cy + s * 1.35], [cx + s * 1.2, cy + s * 0.75]];
+  const poly = (pts, fill) => { g.beginPath(); pts.forEach(([x, y], i) => (i ? g.lineTo(x, y) : g.moveTo(x, y))); g.closePath(); g.fillStyle = fill; g.fill(); g.strokeStyle = 'rgba(150,190,215,.25)'; g.lineWidth = 1; g.stroke(); };
+  poly(left, '#132739'); poly(right, '#0e1f2e'); poly(top, '#1b3349');
+  // tape on top
+  g.strokeStyle = 'rgba(227,168,98,.35)'; g.lineWidth = 5; g.beginPath(); g.moveTo(cx - s * 0.6, cy - s * 0.7); g.lineTo(cx + s * 0.6, cy - s * 0.1); g.stroke();
+  // seal appears after repair
+  const sealP = ease(seg(t, 2.7, 3.2)) * (1 - ease(seg(t, 5.55, 5.95)));
+  if (sealP > 0) {
+    g.globalAlpha = sealP; glow(cx + s * 0.55, cy + s * 0.55, 22, GR, 0.5);
+    g.fillStyle = C.green; g.beginPath(); g.ellipse(cx + s * 0.6, cy + s * 0.62, 9, 11, -0.5, 0, TAU); g.fill();
+    g.fillStyle = '#04120b'; g.font = '700 10px Inter'; g.fillText('✓', cx + s * 0.6 - 4, cy + s * 0.62 + 4); g.globalAlpha = 1;
+  }
+  // viewfinder
+  const L = 22, x0 = cx - 104, y0 = cy - 74, x1 = cx + 104, y1 = cy + 96;
+  const state = t < 1.4 ? 'scan' : t < 2.6 ? 'hold' : t < 3.4 ? 'repair' : t < 4.6 ? 'scan' : t < 5.6 ? 'ok' : 'idle';
+  const col = state === 'hold' ? 'rgba(255,179,71,.95)' : state === 'ok' ? 'rgba(95,211,154,.95)' : 'rgba(111,195,255,.8)';
+  g.strokeStyle = col; g.lineWidth = 2.2;
+  [[x0, y0, 1, 1], [x1, y0, -1, 1], [x0, y1, 1, -1], [x1, y1, -1, -1]].forEach(([x, y, dx, dy]) => { g.beginPath(); g.moveTo(x + dx * L, y); g.lineTo(x, y); g.lineTo(x, y + dy * L); g.stroke(); });
+  if (state === 'scan') {
+    const p = t < 1.4 ? seg(t, 0.1, 1.35) : seg(t, 3.4, 4.55);
+    const sy = y0 + p * (y1 - y0);
+    const gr = g.createLinearGradient(0, sy - 30, 0, sy); gr.addColorStop(0, 'rgba(111,195,255,0)'); gr.addColorStop(1, 'rgba(111,195,255,.22)');
+    g.fillStyle = gr; g.fillRect(x0 + 4, sy - 30, x1 - x0 - 8, 30); g.fillStyle = 'rgba(111,195,255,.95)'; g.fillRect(x0 + 4, sy, x1 - x0 - 8, 1.6);
+  }
+  // status pill
+  const pill = (txt, c1, bg, a) => { g.globalAlpha = a; const w = g.measureText(txt).width + 34; rr(cx - w / 2, y0 + 8, w, 24, 12); g.fillStyle = bg; g.fill(); g.strokeStyle = c1; g.stroke();
+    g.fillStyle = c1; g.beginPath(); g.arc(cx - w / 2 + 13, y0 + 20, 4, 0, TAU); g.fill(); g.fillText(txt, cx - w / 2 + 23, y0 + 24); g.globalAlpha = 1; };
+  g.font = '600 11px "JetBrains Mono"';
+  if (t >= 1.4 && t < 3.4) pill('HOLD · seal missing', C.amber, 'rgba(255,179,71,.12)', ease(seg(t, 1.4, 1.6)) * (1 - seg(t, 3.2, 3.4)));
+  if (t >= 4.6 && t < 5.9) pill('RELEASE · verified', C.green, 'rgba(95,211,154,.12)', ease(seg(t, 4.6, 4.8)) * (1 - seg(t, 5.6, 5.9)));
+  if ((state === 'scan' || state === 'repair' || state === 'idle') && !(t >= 1.4 && t < 3.4) && !(t >= 4.6 && t < 5.9)) { g.globalAlpha = 0.8; g.fillStyle = C.cyan; g.font = '500 10px "JetBrains Mono"'; g.textAlign = 'center'; g.fillText('VISION MODEL · INSPECTING', cx, y0 + 24); g.textAlign = 'left'; g.globalAlpha = 1; }
+  // ledger
+  const evts = [1.45, 2.7, 4.65];
+  const lx = x0 + 12, ly = y1 - 28;
+  g.font = '500 9px "JetBrains Mono"'; g.fillStyle = C.dim; g.fillText('LEDGER', lx, ly - 6);
+  evts.forEach((e, i) => {
+    const p = ease(seg(t, e, e + 0.3)) * (1 - ease(seg(t, 5.6, 5.95))); if (p <= 0) return;
+    g.globalAlpha = p; const y = ly; const lxx = lx + i * 44;
+    rr(lxx, y, 34, 18, 4); g.fillStyle = 'rgba(14,32,48,.95)'; g.fill(); g.strokeStyle = i === 2 ? 'rgba(95,211,154,.7)' : i === 0 ? 'rgba(255,179,71,.7)' : 'rgba(111,195,255,.6)'; g.stroke();
+    g.fillStyle = C.muted; g.fillText(['#a3f', '#7c1', '#e90'][i], lxx + 6, y + 12);
+    if (i > 0) { g.strokeStyle = 'rgba(150,190,215,.35)'; g.beginPath(); g.moveTo(lxx - 10, y + 9); g.lineTo(lxx, y + 9); g.stroke(); }
+    g.globalAlpha = 1;
+  });
+}
+
+// ---------- NeuroSpark ----------
+function drawNeuro(t) {
+  const u = t / T;
+  const x0 = 318, x1 = 448;
+  const bands = [[C.copper, 'α', [3, 7, 11], 0.9], [C.cyan, 'β', [9, 14, 19], 0.6], [C.green, 'θ', [2, 5, 8], 1.1]];
+  bands.forEach(([col, lab, fr, amp], b) => {
+    const yc = 92 + b * 52;
+    g.strokeStyle = col; g.lineWidth = 1.6; g.shadowColor = col; g.shadowBlur = 8; g.beginPath();
+    for (let x = x0; x <= x1; x += 1.5) {
+      const ph = (x - x0) / 130 + u;
+      const y = yc + amp * (8 * Math.sin(TAU * fr[0] * ph) + 5 * Math.sin(TAU * fr[1] * ph + b) + 3 * Math.sin(TAU * fr[2] * ph + 2 * b));
+      x === x0 ? g.moveTo(x, y) : g.lineTo(x, y);
+    }
+    g.stroke(); g.shadowBlur = 0;
+    g.font = '500 12px "JetBrains Mono"'; g.fillStyle = col; g.fillText(lab, x0 - 2, yc - 16);
+  });
+  // flow to grid
+  const gx = 480, gy = 86, cs = 28, gap = 8;
+  for (let b = 0; b < 3; b++) for (let k = 0; k < 2; k++) {
+    const p = (u * 3 + b * 0.33 + k * 0.5) % 1;
+    const sx = x1 + 4, sy = 92 + b * 52, ex = gx - 4, ey = gy + 14 + b * (cs + gap);
+    const x = sx + (ex - sx) * p, y = sy + (ey - sy) * p;
+    glow(x, y, 8, b === 0 ? CU : b === 1 ? CY : GR, 0.8);
+  }
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 3; c++) {
+    const x = gx + c * (cs + gap), y = gy + r * (cs + gap);
+    const a = 0.5 + 0.5 * Math.sin(TAU * (u * 2 - (c * 0.12 + r * 0.07)));
+    rr(x, y, cs, cs, 6); g.fillStyle = `rgba(14,32,48,.95)`; g.fill(); g.strokeStyle = `rgba(119,168,195,${0.25 + a * 0.6})`; g.lineWidth = 1.2; g.stroke();
+    g.fillStyle = `rgba(255,207,148,${0.15 + a * 0.75})`; rr(x + 8, y + 8, cs - 16, cs - 16, 3); g.fill();
+    if (a > 0.85) glow(x + cs / 2, y + cs / 2, 22, CU, (a - 0.85) * 2);
+  }
+  g.font = '500 9px "JetBrains Mono"'; g.fillStyle = C.dim; g.fillText('SPARK EXECUTORS', gx, gy - 10);
+}
+
+// ---------- CarWatch ----------
+const be = await (async () => {
+  if (card !== 'carwatch') return null;
+  const topo = await (await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/countries-50m.json')).json();
+  const f = topojson.feature(topo, topo.objects.countries).features.find((x) => x.id === '056');
+  return f.geometry.type === 'Polygon' ? [f.geometry.coordinates] : f.geometry.coordinates;
+})();
+function proj(lon, lat) { const k = 96; return [352 + (lon - 2.5) * k * Math.cos(50.5 * Math.PI / 180), 52 + (51.55 - lat) * k]; }
+function drawCar(t) {
+  const u = t / T;
+  g.lineWidth = 1.6; g.strokeStyle = 'rgba(119,168,195,.75)'; g.fillStyle = 'rgba(14,32,48,.85)'; g.shadowColor = 'rgba(111,195,255,.5)'; g.shadowBlur = 10;
+  g.beginPath();
+  for (const poly of be) for (const ring of poly) ring.forEach(([lo, la], i) => { const [x, y] = proj(lo, la); i ? g.lineTo(x, y) : g.moveTo(x, y); });
+  g.fill(); g.stroke(); g.shadowBlur = 0;
+  const cities = [['Brussels', 50.85, 4.35], ['Antwerp', 51.22, 4.40], ['Ghent', 51.05, 3.72], ['Liège', 50.63, 5.57], ['Namur', 50.47, 4.87], ['Bruges', 51.21, 3.22], ['Charleroi', 50.41, 4.44]];
+  // radius search around Liège
+  const [lx, ly] = proj(5.57, 50.63);
+  g.save(); g.setLineDash([3, 5]); g.lineDashOffset = -u * 64; g.strokeStyle = 'rgba(227,168,98,.6)'; g.lineWidth = 1.2; g.beginPath(); g.arc(lx, ly, 34, 0, TAU); g.stroke(); g.restore();
+  cities.forEach(([n, la, lo], i) => {
+    const [x, y] = proj(lo, la);
+    const q = (u * 2 + i * 0.23) % 1;
+    g.strokeStyle = `rgba(111,195,255,${(1 - q) * 0.8})`; g.lineWidth = 1.2; g.beginPath(); g.arc(x, y, 3 + q * 16, 0, TAU); g.stroke();
+    g.fillStyle = n === 'Liège' ? C.copper2 : '#cfeaff'; g.beginPath(); g.arc(x, y, n === 'Liège' ? 3.6 : 2.6, 0, TAU); g.fill();
+  });
+  // notification
+  const p = ease(seg(t, 1.6, 2.1)) * (1 - ease(seg(t, 5.0, 5.5)));
+  if (p > 0) {
+    const nx = 424, ny = 176 + (1 - p) * 26, nw = 160, nh = 54;
+    g.globalAlpha = p;
+    rr(nx, ny, nw, nh, 12); g.fillStyle = 'rgba(16,34,51,.97)'; g.fill(); g.strokeStyle = 'rgba(150,190,215,.3)'; g.stroke();
+    rr(nx + 10, ny + 11, 30, 30, 8); g.fillStyle = '#229ED9'; g.fill();
+    g.fillStyle = '#fff'; g.font = '700 15px Inter'; g.fillText('✈', nx + 17, ny + 32);
+    g.font = '600 11px Inter'; g.fillStyle = C.text; g.fillText('New deal near Liège', nx + 48, ny + 23);
+    g.font = '500 10px "JetBrains Mono"'; g.fillStyle = C.green; g.fillText('score 87 / 100', nx + 48, ny + 39);
+    g.globalAlpha = 1;
+  }
+}
+
+const draw = { rag: drawRag, parallax: drawParallax, neuro: drawNeuro, carwatch: drawCar }[card];
+window.renderAt = (t) => {
+  g.clearRect(0, 0, W, H);
+  const u = t / T;
+  const bg = g.createRadialGradient(470, 140, 10, 470, 140, 260); bg.addColorStop(0, card === 'neuro' || card === 'carwatch' ? 'rgba(31,95,138,.32)' : 'rgba(196,122,44,.22)'); bg.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = bg; g.fillRect(0, 0, W, H);
+  draw(t);
+  document.getElementById('sheen').style.left = `${-220 + (W + 440) * u}px`;
+  return true;
+};
+await document.fonts.ready;
+window.renderAt(Number(new URLSearchParams(location.search).get('t') || 0));
+window.__ready = true;
+</script>
+</body></html>

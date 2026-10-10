@@ -1,0 +1,108 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Terminal</title>
+<link rel="stylesheet" href="theme.css">
+<style>
+  #stage { width: 1200px; height: 400px; }
+  .win { position: absolute; left: 26px; top: 24px; width: 1148px; height: 352px; border-radius: 16px; background: var(--panel);
+    box-shadow: inset 0 0 0 1px var(--line), 0 30px 80px rgba(0,0,0,.45); backdrop-filter: blur(18px); overflow: hidden; }
+  .bar { height: 44px; display: flex; align-items: center; padding: 0 18px; gap: 9px; border-bottom: 1px solid var(--line); background: rgba(255,255,255,.015); }
+  .bar i { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
+  .bar .t { position: absolute; left: 0; right: 0; text-align: center; font: 500 13px 'JetBrains Mono', monospace; color: var(--dim); letter-spacing: .04em; }
+  .body { position: absolute; left: 34px; top: 66px; font: 400 19px/31px 'JetBrains Mono', monospace; white-space: pre; }
+  .p { color: var(--copper); } .c { color: var(--text); font-weight: 500; } .o { color: var(--muted); } .a { color: var(--cyan); } .g { color: var(--green); }
+  .cursor { display: inline-block; width: 10px; height: 21px; background: var(--copper2); vertical-align: -3px; margin-left: 2px; box-shadow: 0 0 12px rgba(255,207,148,.6); }
+  .side { position: absolute; right: 0; top: 44px; bottom: 0; width: 330px; border-left: 1px solid var(--line); background: linear-gradient(180deg, rgba(8,18,28,.5), rgba(8,18,28,.2)); }
+  .side .kicker { position: absolute; left: 28px; top: 24px; }
+  #pipe { position: absolute; left: 0; top: 0; }
+</style></head>
+<body>
+<div id="stage">
+  <div class="dots"></div>
+  <div class="orb" id="o1" style="width:420px;height:420px;background:#c47a2c;"></div>
+  <div class="orb" id="o2" style="width:480px;height:480px;background:#1f5f8a;"></div>
+  <div class="win">
+    <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i><div class="t">emir@forge: ~</div></div>
+    <div class="body" id="body"></div>
+    <div class="side"><div class="kicker">How an answer is built</div><canvas id="pipe"></canvas></div>
+  </div>
+  <div class="sheen" id="sheen"></div>
+</div>
+<script>
+const T = 10, TAU = Math.PI * 2, DPR = window.devicePixelRatio || 1;
+const L = [
+  { k: 'cmd', s: 'whoami' },
+  { k: 'out', h: '<span class="c">Emir Makhtsaev</span><span class="o"> · final-year AI student @ HELMo, Liège</span>' , s: 'Emir Makhtsaev · final-year AI student @ HELMo, Liège' },
+  { k: 'cmd', s: 'cat focus.txt' },
+  { k: 'out', h: '<span class="a">→</span><span class="o"> AI agents that solve real business problems</span>', s: '→ AI agents that solve real business problems' },
+  { k: 'out', h: '<span class="a">→</span><span class="o"> RAG assistants that cite their sources</span>', s: '→ RAG assistants that cite their sources' },
+  { k: 'out', h: '<span class="a">→</span><span class="o"> data pipelines you can reproduce</span>', s: '→ data pipelines you can reproduce' },
+  { k: 'cmd', s: 'status --internship' },
+  { k: 'out', h: '<span class="g">●</span><span class="c"> Open to a 6-month internship in cloud &amp; AI · 2027</span>', s: '● Open to a 6-month internship in cloud & AI · 2027' },
+];
+// timeline
+let tt = 0.45; const CPS = 24;
+for (const l of L) {
+  if (l.k === 'cmd') { l.t0 = tt; l.t1 = tt + l.s.length / CPS; tt = l.t1 + 0.32; }
+  else { l.t0 = tt; l.t1 = tt + 0.22; tt = l.t1 + 0.12; }
+}
+const END = tt;
+const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const body = document.getElementById('body');
+
+// side pipeline
+const cv = document.getElementById('pipe'); const SW = 330, SH = 308;
+cv.width = SW * DPR; cv.height = SH * DPR; cv.style.width = SW + 'px'; cv.style.height = SH + 'px';
+const g = cv.getContext('2d'); g.scale(DPR, DPR);
+const nodes = [['Question', 'what the user needs'], ['Retrieve', 'find the right sources'], ['Verify', 'rules check the result'], ['Answer', 'with citations']];
+function drawPipe(u) {
+  g.clearRect(0, 0, SW, SH);
+  const x = 52, y0 = 70, dy = 62;
+  g.strokeStyle = 'rgba(119,168,195,.25)'; g.lineWidth = 2; g.setLineDash([4, 6]); g.lineDashOffset = -u * 60;
+  g.beginPath(); g.moveTo(x, y0); g.lineTo(x, y0 + dy * 3); g.stroke(); g.setLineDash([]);
+  const p = (u * 2) % 1;                      // pulse travels twice per loop
+  const py = y0 + p * dy * 3;
+  const grd = g.createRadialGradient(x, py, 0, x, py, 22); grd.addColorStop(0, 'rgba(255,207,148,.95)'); grd.addColorStop(1, 'rgba(255,207,148,0)');
+  g.fillStyle = grd; g.beginPath(); g.arc(x, py, 22, 0, TAU); g.fill();
+  nodes.forEach(([a, b], i) => {
+    const ny = y0 + i * dy; const near = Math.max(0, 1 - Math.abs(py - ny) / 34);
+    g.fillStyle = '#0a1724'; g.strokeStyle = `rgba(227,168,98,${0.55 + near * 0.45})`; g.lineWidth = 2.5;
+    g.beginPath(); g.arc(x, ny, 9 + near * 2, 0, TAU); g.fill(); g.stroke();
+    g.fillStyle = `rgba(255,207,148,${0.4 + near * 0.6})`; g.beginPath(); g.arc(x, ny, 3.5, 0, TAU); g.fill();
+    g.font = '600 17px "Space Grotesk"'; g.fillStyle = `rgba(238,244,248,${0.75 + near * 0.25})`; g.fillText(a, x + 28, ny + 1);
+    g.font = '400 12.5px "JetBrains Mono"'; g.fillStyle = '#5d7d91'; g.fillText(b, x + 28, ny + 19);
+  });
+}
+
+window.renderAt = (t0) => {
+  const t = (t0 + 8.4) % T;
+  const u = t0 / T;
+  let html = '';
+  const fade = t > T - 0.7 ? Math.max(0, (T - 0.2 - t) / 0.5) : 1;
+  let lastOpen = -1;
+  L.forEach((l, i) => {
+    if (t < l.t0) return;
+    lastOpen = i;
+    if (l.k === 'cmd') {
+      const n = Math.min(l.s.length, Math.floor((t - l.t0) * CPS));
+      html += `<span class="p">❯ </span><span class="c">${esc(l.s.slice(0, n))}</span>`;
+      if (t < l.t1 + 0.32) html += '<span class="cursor"></span>';
+      html += '\n';
+    } else {
+      const a = Math.min(1, (t - l.t0) / 0.22);
+      html += `<span style="opacity:${a}">${l.h}</span>\n`;
+    }
+  });
+  if (t >= END) {
+    const blink = Math.floor((t - END) * 2) % 2 === 0;
+    html += `<span class="p">❯ </span>${blink ? '<span class="cursor"></span>' : ''}`;
+  }
+  body.innerHTML = html; body.style.opacity = fade;
+  drawPipe(u);
+  document.getElementById('o1').style.transform = `translate(${-80 + 60 * Math.cos(0)}px, ${-160 + 40 * Math.sin(0)}px)`;
+  document.getElementById('o2').style.transform = `translate(${820 + 70 * Math.cos(0 + 2)}px, ${80 + 50 * Math.sin(0 + 2)}px)`;
+  document.getElementById('sheen').style.left = `${-220 + (1200 + 440) * u}px`;
+  return true;
+};
+document.fonts.ready.then(() => { window.renderAt(Number(new URLSearchParams(location.search).get('t') || 0)); window.__ready = true; });
+</script>
+</body></html>
