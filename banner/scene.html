@@ -2,55 +2,54 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>Hero render</title>
+<title>Hero render v2</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500&display=block" rel="stylesheet">
 <style>
   html, body { margin: 0; background: transparent; overflow: hidden; }
-  #stage {
-    position: relative; width: 1600px; height: 520px; overflow: hidden;
-    border-radius: 26px; background: #03070d; isolation: isolate;
-  }
-  #gl { position: absolute; inset: 0; }
-  #veil {
-    position: absolute; inset: 0; pointer-events: none;
-    background:
-      linear-gradient(90deg, rgba(3,7,13,.97) 0%, rgba(3,7,13,.88) 30%, rgba(3,7,13,.35) 48%, rgba(3,7,13,0) 62%),
-      radial-gradient(120% 140% at 50% 50%, rgba(0,0,0,0) 60%, rgba(0,0,0,.55) 100%);
-  }
-  #edge { position: absolute; inset: 0; border-radius: 26px; box-shadow: inset 0 0 0 1px rgba(150,190,215,.14); pointer-events: none; }
+  #stage { position: relative; width: 1600px; height: 520px; overflow: hidden; border-radius: 26px; background: #020509; isolation: isolate; }
+  #gl { position: absolute; inset: 0; width: 1600px; height: 520px; }
+  #flare { position: absolute; inset: 0; pointer-events: none; mix-blend-mode: screen; }
+  #flare > div { position: absolute; left: 0; top: 0; transform-origin: 50% 50%; border-radius: 50%; }
+  .f-glow { width: 560px; height: 560px; background: radial-gradient(circle, rgba(255,190,120,.26) 0%, rgba(255,150,80,.09) 20%, rgba(120,170,255,.035) 42%, rgba(0,0,0,0) 70%); }
+  .f-core { width: 120px; height: 120px; background: radial-gradient(circle, #fff 0%, #fff8ec 16%, rgba(255,214,160,.85) 30%, rgba(255,170,90,.25) 55%, rgba(0,0,0,0) 72%); }
+  .f-rays { width: 380px; height: 380px; background: repeating-conic-gradient(from 7deg, rgba(255,236,210,.55) 0deg 0.7deg, rgba(0,0,0,0) 0.7deg 9deg);
+            -webkit-mask: radial-gradient(circle, #000 0%, rgba(0,0,0,.6) 18%, transparent 62%); mask: radial-gradient(circle, #000 0%, rgba(0,0,0,.6) 18%, transparent 62%); }
+  .f-streak { width: 1500px; height: 10px; border-radius: 50% !important; background: radial-gradient(ellipse at center, rgba(255,255,255,.95) 0%, rgba(170,205,255,.55) 18%, rgba(110,160,255,.18) 45%, rgba(0,0,0,0) 72%); filter: blur(.6px); }
+  .f-streak2 { width: 700px; height: 34px; border-radius: 50% !important; background: radial-gradient(ellipse at center, rgba(150,190,255,.28) 0%, rgba(0,0,0,0) 70%); }
+  .f-ghost { border: 1px solid rgba(160,220,255,.10); filter: blur(1.5px); }
+  #veil { position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(90deg, rgba(2,5,9,.97) 0%, rgba(2,5,9,.9) 28%, rgba(2,5,9,.4) 47%, rgba(2,5,9,0) 60%),
+                radial-gradient(130% 150% at 55% 50%, rgba(0,0,0,0) 58%, rgba(0,0,0,.6) 100%); }
+  #edge { position: absolute; inset: 0; border-radius: 26px; box-shadow: inset 0 0 0 1px rgba(150,190,215,.13); pointer-events: none; }
   .ui { position: absolute; left: 92px; top: 0; height: 100%; display: flex; flex-direction: column; justify-content: center; }
   .kicker { font: 500 15px 'JetBrains Mono', monospace; letter-spacing: .34em; color: #7fa6bd; display: flex; align-items: center; gap: 14px; }
   .kicker i { display: inline-block; width: 34px; height: 1px; background: linear-gradient(90deg, #e3a862, rgba(227,168,98,0)); }
-  .name {
-    font: 700 108px/1 'Space Grotesk', sans-serif; letter-spacing: -0.025em; margin: 22px 0 20px -4px;
+  .name { font: 700 108px/1 'Space Grotesk', sans-serif; letter-spacing: -0.025em; margin: 22px 0 20px -4px;
     background-image: linear-gradient(100deg, #eef4f8 0%, #eef4f8 42%, #ffd8a8 49%, #fff3e2 50%, #ffd8a8 51%, #eef4f8 58%, #eef4f8 100%);
-    background-size: 320% 100%; background-repeat: no-repeat;
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    filter: drop-shadow(0 6px 30px rgba(119,168,195,.18));
-  }
+    background-size: 320% 100%; background-repeat: no-repeat; -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 6px 30px rgba(119,168,195,.16)); }
   .tag { font: 400 31px 'Inter', sans-serif; color: #c4d4de; letter-spacing: -0.005em; }
   .tag b { font-weight: 500; color: #e9b77a; }
-  .pill {
-    margin-top: 34px; align-self: flex-start; display: flex; align-items: center; gap: 14px;
-    padding: 12px 22px 12px 18px; border-radius: 999px;
-    background: rgba(14,34,49,.72); box-shadow: inset 0 0 0 1px rgba(150,190,215,.18), 0 10px 40px rgba(0,0,0,.35);
-    font: 500 17px 'Inter', sans-serif; color: #e6eef3;
-  }
+  .pill { margin-top: 34px; align-self: flex-start; display: flex; align-items: center; gap: 14px; padding: 12px 22px 12px 18px; border-radius: 999px;
+    background: rgba(12,28,42,.74); box-shadow: inset 0 0 0 1px rgba(150,190,215,.18), 0 10px 40px rgba(0,0,0,.35); font: 500 17px 'Inter', sans-serif; color: #e6eef3; }
   .dot { position: relative; width: 12px; height: 12px; }
   .dot::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: #5fd39a; box-shadow: 0 0 12px #5fd39a; }
   .dot span { position: absolute; inset: 0; border-radius: 50%; border: 2px solid #5fd39a; }
   .hud { position: absolute; font: 400 12.5px 'JetBrains Mono', monospace; letter-spacing: .22em; color: #4e7186; }
   .hud.tl { left: 92px; top: 38px; }
-  .hud.br { right: 40px; bottom: 32px; text-align: right; }
   .hud em { font-style: normal; color: #e3a862; }
 </style>
 </head>
 <body>
 <div id="stage">
-  <canvas id="gl" width="1600" height="520"></canvas>
+  <canvas id="gl"></canvas>
   <div id="veil"></div>
+  <div id="flare">
+    <div class="f-glow"></div><div class="f-streak2"></div><div class="f-rays"></div><div class="f-streak"></div><div class="f-core"></div>
+    <div class="f-ghost g1"></div><div class="f-ghost g2"></div><div class="f-ghost g3"></div><div class="f-ghost g4"></div>
+  </div>
   <div class="hud tl"><em>●</em>&nbsp; 50.63°N 5.57°E · LIÈGE, BELGIUM</div>
   <div class="ui">
     <div class="kicker"><i></i>APPLIED AI · AGENTS · CLOUD</div>
@@ -58,7 +57,7 @@
     <div class="tag">I build AI systems <b>you can trust.</b></div>
     <div class="pill"><div class="dot"><span id="ring"></span></div>Open to a 6-month internship · 2027</div>
   </div>
-    <div id="edge"></div>
+  <div id="edge"></div>
 </div>
 
 <script type="importmap">
@@ -72,151 +71,129 @@ import * as THREE from 'three';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
-import * as topojson from 'https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/+esm';
 
-const W = 1600, H = 520, T = 8;         // loop length in seconds
-const TAU = Math.PI * 2;
-const R = 2.4;                          // globe radius
+const W = 1600, H = 520, T = 8, TAU = Math.PI * 2;
+const DPR = window.devicePixelRatio || 1;
+const R = 2.4;
 const params = new URLSearchParams(location.search);
 
 const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, preserveDrawingBuffer: true });
-renderer.setPixelRatio(1);
+renderer.setPixelRatio(DPR);
 renderer.setSize(W, H, false);
-renderer.setClearColor(0x03070d, 1);
+renderer.setClearColor(0x020509, 1);
 
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(30, W / H, 0.1, 200);
+const camera = new THREE.PerspectiveCamera(30, W / H, 0.1, 400);
 camera.position.set(0, 0, 9.2);
+camera.lookAt(0, 0, 0);
+camera.updateMatrixWorld();
 
 const globe = new THREE.Group();
 globe.position.set(3.95, -0.42, 0);
 scene.add(globe);
-const earth = new THREE.Group();        // rotates with the planet
+const earth = new THREE.Group();
 globe.add(earth);
-const LAT0 = 34, LON0 = 12;
+const LAT0 = 34, LON0 = 10;
 
 function ll(lat, lon, r = R) {
   const la = lat * Math.PI / 180, lo = lon * Math.PI / 180;
   return new THREE.Vector3(r * Math.cos(la) * Math.sin(lo), r * Math.sin(la), r * Math.cos(la) * Math.cos(lo));
 }
-
-// ---------- land mask from Natural Earth ----------
-const topo = await (await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2.0.2/land-50m.json')).json();
-const land = topojson.feature(topo, topo.objects.land);
-const MW = 2048, MH = 1024;
-const mask = document.createElement('canvas'); mask.width = MW; mask.height = MH;
-const mx = mask.getContext('2d');
-mx.fillStyle = '#000'; mx.fillRect(0, 0, MW, MH); mx.fillStyle = '#fff';
-const polys = (land.features || [land]).flatMap((f) => (f.geometry.type === 'MultiPolygon' ? f.geometry.coordinates : [f.geometry.coordinates]));
-mx.beginPath();
-for (const poly of polys) for (const ring of poly) {
-  let prev = null;
-  ring.forEach(([lon, lat], i) => {
-    const x = (lon + 180) / 360 * MW, y = (90 - lat) / 180 * MH;
-    if (i === 0 || (prev !== null && Math.abs(lon - prev) > 180)) mx.moveTo(x, y); else mx.lineTo(x, y);
-    prev = lon;
-  });
-  mx.closePath();
-}
-mx.fill('evenodd');
-const md = mx.getImageData(0, 0, MW, MH).data;
-const isLand = (lat, lon) => {
-  const x = Math.min(MW - 1, Math.max(0, Math.floor((lon + 180) / 360 * MW)));
-  const y = Math.min(MH - 1, Math.max(0, Math.floor((90 - lat) / 180 * MH)));
-  return md[(y * MW + x) * 4] > 127;
-};
-
-// ---------- deterministic random ----------
-let seed = 7;
+let seed = 11;
 const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
 
-// ---------- ocean sphere ----------
-const sun = new THREE.Vector3(-0.55, 0.62, 0.56).normalize();
-const ocean = new THREE.Mesh(
-  new THREE.SphereGeometry(R * 0.994, 128, 96),
-  new THREE.ShaderMaterial({
-    uniforms: { uSun: { value: sun } },
-    vertexShader: `varying vec3 vN; varying vec3 vV; varying vec3 vW;
-      void main(){ vec4 mv = modelViewMatrix*vec4(position,1.); vN = normalize(normalMatrix*normal); vV = normalize(-mv.xyz);
-      vW = normalize((modelMatrix*vec4(position,0.)).xyz); gl_Position = projectionMatrix*mv; }`,
-    fragmentShader: `uniform vec3 uSun; varying vec3 vN; varying vec3 vV; varying vec3 vW;
-      void main(){ float f = 1.0 - max(dot(vN, vV), 0.0);
-        float light = clamp(dot(vW, uSun)*0.5 + 0.55, 0.0, 1.0);
-        vec3 base = mix(vec3(0.006,0.016,0.028), vec3(0.018,0.058,0.092), light);
-        vec3 col = base + pow(f, 2.6) * vec3(0.05, 0.19, 0.31) * (0.4 + light);
-        gl_FragColor = vec4(col, 1.0); }`,
-  })
-);
-earth.add(ocean);
+// ---------- sun: placed just outside the upper-left limb in screen space ----------
+const toScreen = (v) => { const p = v.clone().project(camera); return new THREE.Vector2((p.x + 1) / 2 * W, (1 - p.y) / 2 * H); };
+const gC = toScreen(globe.position);
+const camRight = new THREE.Vector3(1, 0, 0);
+const gRad = toScreen(globe.position.clone().add(camRight.clone().multiplyScalar(R))).distanceTo(gC);
+const SUN_ANGLE = Number(params.get('sa') || 236) * Math.PI / 180;    // screen angle, y down
+const SUN_DIST = Number(params.get('sd') || 1.11);
+const sunPx = new THREE.Vector2(gC.x + Math.cos(SUN_ANGLE) * gRad * SUN_DIST, gC.y + Math.sin(SUN_ANGLE) * gRad * SUN_DIST);
+const ndc = new THREE.Vector3(sunPx.x / W * 2 - 1, -(sunPx.y / H * 2 - 1), 0.5).unproject(camera);
+const sunDir = ndc.sub(camera.position).normalize();     // direction toward the sun (world)
 
-// ---------- graticule (very faint lat/lon lines) ----------
-{
-  const pts = [];
-  for (let lat = -60; lat <= 60; lat += 30) for (let lon = -180; lon < 180; lon += 2) pts.push(ll(lat, lon, R * 1.0005), ll(lat, lon + 2, R * 1.0005));
-  for (let lon = -180; lon < 180; lon += 30) for (let lat = -88; lat < 88; lat += 2) pts.push(ll(lat, lon, R * 1.0005), ll(lat + 2, lon, R * 1.0005));
-  const g = new THREE.BufferGeometry().setFromPoints(pts);
-  earth.add(new THREE.LineSegments(g, new THREE.LineBasicMaterial({ color: 0x2a5873, transparent: true, opacity: 0.16, depthWrite: false })));
-}
+// ---------- textures ----------
+const TX = 'https://cdn.jsdelivr.net/gh/mrdoob/three.js@r160/examples/textures/planets/';
+const loader = new THREE.TextureLoader();
+const load = (f, srgb) => new Promise((res, rej) => loader.load(TX + f, (t) => { if (srgb) t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; res(t); }, undefined, rej));
+const [dayTex, nightTex, specTex, cloudTex] = await Promise.all([
+  load('earth_atmos_2048.jpg', true), load('earth_lights_2048.png', true), load('earth_specular_2048.jpg', false), load('earth_clouds_1024.png', false),
+]);
 
-// ---------- land dots ----------
-const dotUniforms = { uTime: { value: 0 }, uSun: { value: sun } };
-{
-  const N = 90000, pos = [], rnds = [];
-  const ga = Math.PI * (3 - Math.sqrt(5));
-  for (let i = 0; i < N; i++) {
-    const y = 1 - (i / (N - 1)) * 2, r = Math.sqrt(1 - y * y), th = ga * i;
-    const x = Math.cos(th) * r, z = Math.sin(th) * r;
-    const lat = Math.asin(y) * 180 / Math.PI, lon = Math.atan2(x, z) * 180 / Math.PI;
-    if (!isLand(lat, lon)) continue;
-    pos.push(x * R * 1.002, y * R * 1.002, z * R * 1.002); rnds.push(rnd());
-  }
-  const g = new THREE.BufferGeometry();
-  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-  g.setAttribute('aRand', new THREE.Float32BufferAttribute(rnds, 1));
-  earth.add(new THREE.Points(g, new THREE.ShaderMaterial({
-    uniforms: dotUniforms, transparent: true, depthWrite: false,
-    vertexShader: `attribute float aRand; varying float vFace; varying float vRand; varying float vLight; uniform vec3 uSun;
-      void main(){ vec4 mv = modelViewMatrix*vec4(position,1.); vec3 n = normalize(normalMatrix*normalize(position));
-        vFace = dot(n, normalize(-mv.xyz)); vRand = aRand;
-        vLight = clamp(dot(normalize((modelMatrix*vec4(position,0.)).xyz), uSun)*0.5+0.55, 0.0, 1.0);
-        gl_PointSize = 2.35 * (9.2 / -mv.z); gl_Position = projectionMatrix*mv; }`,
-    fragmentShader: `uniform float uTime; varying float vFace; varying float vRand; varying float vLight;
-      void main(){ if (vFace < 0.0) discard; vec2 c = gl_PointCoord - 0.5; float d = length(c); if (d > 0.5) discard;
-        float a = smoothstep(0.5, 0.15, d) * smoothstep(0.0, 0.32, vFace);
-        float tw = 0.82 + 0.18 * sin(6.2831853 * (uTime / 8.0) * 2.0 + vRand * 6.2831853);
-        float spark = step(0.985, vRand) * (0.5 + 0.5 * sin(6.2831853 * (uTime / 8.0) * 3.0 + vRand * 40.0));
-        vec3 col = mix(vec3(0.16, 0.33, 0.46), vec3(0.58, 0.82, 0.98), vLight) * tw;
-        col += spark * vec3(1.0, 0.72, 0.42) * 1.4;
-        gl_FragColor = vec4(col, a); }`,
-  })));
-}
+// ---------- earth surface ----------
+const earthU = { uDay: { value: dayTex }, uNight: { value: nightTex }, uSpec: { value: specTex }, uCloud: { value: cloudTex },
+  uSun: { value: sunDir }, uCloudShift: { value: 0 } };
+const earthMesh = new THREE.Mesh(new THREE.SphereGeometry(R, 192, 128), new THREE.ShaderMaterial({
+  uniforms: earthU,
+  vertexShader: `varying vec2 vUv; varying vec3 vNw; varying vec3 vPw;
+    void main(){ vUv = uv; vNw = normalize(mat3(modelMatrix) * normal); vec4 w = modelMatrix * vec4(position, 1.0); vPw = w.xyz;
+      gl_Position = projectionMatrix * viewMatrix * w; }`,
+  fragmentShader: `uniform sampler2D uDay, uNight, uSpec, uCloud; uniform vec3 uSun; uniform float uCloudShift;
+    varying vec2 vUv; varying vec3 vNw; varying vec3 vPw;
+    void main(){
+      vec3 N = normalize(vNw); vec3 V = normalize(cameraPosition - vPw); vec3 L = normalize(uSun);
+      float ndl = dot(N, L);
+      float dayMix = smoothstep(-0.06, 0.22, ndl);
+      vec3 day = texture2D(uDay, vUv).rgb;
+      day = mix(day, day * vec3(0.78, 0.92, 1.12), 0.35);
+      float cloud = texture2D(uCloud, vUv + vec2(uCloudShift, 0.0)).r;
+      float ocean = texture2D(uSpec, vUv).r;
+      vec3 lit = day * (0.04 + 1.55 * max(ndl, 0.0));
+      lit = mix(lit, vec3(1.0) * (0.06 + 1.7 * max(ndl, 0.0)), cloud * 0.85);
+      vec3 H = normalize(L + V);
+      float glint = pow(max(dot(N, H), 0.0), 70.0) * ocean * (1.0 - cloud) * smoothstep(0.0, 0.2, ndl);
+      lit += vec3(1.0, 0.86, 0.66) * glint * 2.4;
+      vec3 lights = texture2D(uNight, vUv).rgb;
+      lights = pow(lights, vec3(1.25)) * vec3(1.0, 0.70, 0.40) * 3.4 * (1.0 - cloud * 0.75);
+      vec3 nightAmb = day * vec3(0.10, 0.16, 0.26) * 0.045 + cloud * vec3(0.006, 0.009, 0.014);
+      vec3 col = mix(nightAmb + lights, lit, dayMix);
+      // warm terminator band
+      col += vec3(1.0, 0.42, 0.14) * exp(-pow(ndl * 9.0, 2.0)) * 0.10 * (0.4 + cloud);
+      // atmospheric rim on the surface
+      float f = pow(1.0 - max(dot(N, V), 0.0), 4.5);
+      float fwd = pow(max(dot(-V, L), 0.0), 3.0);
+      col += f * vec3(0.24, 0.52, 1.0) * (0.015 + 1.2 * dayMix + 0.45 * fwd);
+      gl_FragColor = vec4(col, 1.0);
+    }`,
+}));
+earthMesh.rotation.y = -Math.PI / 2;
+earth.add(earthMesh);
 
-// ---------- atmosphere ----------
-for (const [s, p, k, c, gain] of [[1.15, 5.0, 0.64, [0.22, 0.52, 1.0], 0.95], [1.022, 3.2, 0.84, [0.40, 0.70, 1.0], 0.42]]) {
-  globe.add(new THREE.Mesh(new THREE.SphereGeometry(R * s, 96, 64), new THREE.ShaderMaterial({
+// ---------- atmosphere shells ----------
+function shell(scale, power, base, gain, color) {
+  return new THREE.Mesh(new THREE.SphereGeometry(R * scale, 128, 96), new THREE.ShaderMaterial({
     side: THREE.BackSide, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false,
-    uniforms: { uSun: { value: sun } },
-    vertexShader: `varying vec3 vN; varying vec3 vW; void main(){ vN = normalize(normalMatrix*normal); vW = normalize((modelMatrix*vec4(normal,0.)).xyz); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
-    fragmentShader: `uniform vec3 uSun; varying vec3 vN; varying vec3 vW;
-      void main(){ float i = pow(max(${k.toFixed(2)} - dot(vN, vec3(0.,0.,1.)), 0.0), ${p.toFixed(1)});
-        float l = clamp(dot(-vW, uSun)*0.45+0.6, 0.3, 1.0);
-        gl_FragColor = vec4(vec3(${c.map(v => v.toFixed(2)).join(',')}) * i * ${gain.toFixed(2)} * l, 1.0); }`,
-  })));
+    uniforms: { uSun: { value: sunDir } },
+    vertexShader: `varying vec3 vN; varying vec3 vPw; varying vec3 vNw;
+      void main(){ vN = normalize(normalMatrix * normal); vNw = normalize(mat3(modelMatrix) * normal); vec4 w = modelMatrix * vec4(position,1.0); vPw = w.xyz;
+        gl_Position = projectionMatrix * viewMatrix * w; }`,
+    fragmentShader: `uniform vec3 uSun; varying vec3 vN; varying vec3 vPw; varying vec3 vNw;
+      void main(){ vec3 V = normalize(vPw - cameraPosition); vec3 L = normalize(uSun);
+        float rim = pow(max(${base.toFixed(2)} - dot(vN, vec3(0.0, 0.0, 1.0)), 0.0), ${power.toFixed(1)});
+        float side = clamp(dot(-vNw, -L) * 0.5 + 0.5, 0.0, 1.0);
+        float mie = pow(max(dot(V, L), 0.0), 60.0);
+        vec3 c = vec3(${color.join(',')}) * rim * (0.10 + 0.8 * side) + vec3(1.0, 0.80, 0.56) * mie * rim * 0.9;
+        gl_FragColor = vec4(c * ${gain.toFixed(2)}, 1.0); }`,
+  }));
 }
+globe.add(shell(1.17, 5.5, 0.66, 1.0, ['0.20', '0.48', '1.00']));
+globe.add(shell(1.03, 3.0, 0.86, 0.55, ['0.38', '0.68', '1.00']));
 
 // ---------- arcs ----------
 const HOME = [50.63, 5.57];
 const cities = {
   Dublin: [53.35, -6.26], Stockholm: [59.33, 18.07], Madrid: [40.42, -3.70], SaoPaulo: [-23.55, -46.63],
   Johannesburg: [-26.20, 28.05], Dubai: [25.20, 55.27], Mumbai: [19.08, 72.88], Reykjavik: [64.15, -21.94],
-  Lagos: [6.52, 3.38], Cairo: [30.04, 31.24], Nairobi: [-1.29, 36.82], Warsaw: [52.23, 21.01],
+  Lagos: [6.52, 3.38], Cairo: [30.04, 31.24], Nairobi: [-1.29, 36.82], Warsaw: [52.23, 21.01], NewYork: [40.71, -74.0],
 };
 const routes = [
   ['HOME', 'Dublin', 0.00, 1], ['HOME', 'Stockholm', 0.42, 1], ['HOME', 'Madrid', 0.18, 1], ['HOME', 'SaoPaulo', 0.62, 1],
   ['HOME', 'Johannesburg', 0.30, 1], ['HOME', 'Dubai', 0.80, 1], ['HOME', 'Mumbai', 0.08, 1], ['HOME', 'Reykjavik', 0.55, 1],
-  ['Madrid', 'Lagos', 0.70, 2], ['Cairo', 'Nairobi', 0.25, 2], ['Dubai', 'Mumbai', 0.45, 2], ['HOME', 'Warsaw', 0.90, 2],
-  ['Lagos', 'SaoPaulo', 0.12, 1], ['Cairo', 'Dubai', 0.66, 2],
+  ['HOME', 'NewYork', 0.36, 1], ['Madrid', 'Lagos', 0.70, 2], ['Cairo', 'Nairobi', 0.25, 2], ['Dubai', 'Mumbai', 0.45, 2],
+  ['HOME', 'Warsaw', 0.90, 2], ['Lagos', 'SaoPaulo', 0.12, 1], ['Cairo', 'Dubai', 0.66, 2],
 ];
 const getLL = (k) => (k === 'HOME' ? HOME : cities[k]);
 const arcMats = [], rings = [];
@@ -225,92 +202,114 @@ const arcFS = `uniform float uHead; uniform vec3 uCol; uniform float uBase; vary
   void main(){ float trail = smoothstep(uHead - 0.42, uHead, vU) * step(vU, uHead);
     float head = exp(-pow((vU - uHead) * 26.0, 2.0));
     float a = uBase + trail * 0.75 + head;
-    vec3 col = uCol * (0.55 + trail * 0.9) + vec3(1.0, 0.92, 0.8) * head * 2.6;
+    vec3 col = uCol * (0.5 + trail * 0.9) + vec3(1.0, 0.93, 0.82) * head * 2.8;
     gl_FragColor = vec4(col, clamp(a, 0.0, 1.0)); }`;
 for (const [a, b, phase, mult] of routes) {
   const A = ll(...getLL(a)).normalize(), B = ll(...getLL(b)).normalize();
   const ang = A.angleTo(B);
   const pts = [];
-  for (let i = 0; i <= 80; i++) {
-    const s = i / 80;
-    const v = new THREE.Vector3().copy(A).multiplyScalar(Math.sin((1 - s) * ang) / Math.sin(ang))
-      .add(new THREE.Vector3().copy(B).multiplyScalar(Math.sin(s * ang) / Math.sin(ang)));
-    pts.push(v.normalize().multiplyScalar(R * (1.004 + (0.08 + 0.42 * ang / Math.PI) * Math.sin(Math.PI * s))));
+  for (let i = 0; i <= 90; i++) {
+    const s = i / 90;
+    const v = A.clone().multiplyScalar(Math.sin((1 - s) * ang) / Math.sin(ang)).add(B.clone().multiplyScalar(Math.sin(s * ang) / Math.sin(ang)));
+    pts.push(v.normalize().multiplyScalar(R * (1.004 + (0.07 + 0.40 * ang / Math.PI) * Math.sin(Math.PI * s))));
   }
+  const home = a === 'HOME';
   const m = new THREE.ShaderMaterial({
-    uniforms: { uHead: { value: 0 }, uCol: { value: new THREE.Color(a === 'HOME' ? 0xffa24a : 0x6fc3ff) }, uBase: { value: a === 'HOME' ? 0.22 : 0.12 } },
+    uniforms: { uHead: { value: 0 }, uCol: { value: new THREE.Color(home ? 0xffa24a : 0x6fc3ff) }, uBase: { value: home ? 0.16 : 0.09 } },
     vertexShader: arcVS, fragmentShader: arcFS, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
   });
   m.userData = { phase, mult };
   arcMats.push(m);
-  earth.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 160, a === 'HOME' ? 0.012 : 0.008, 8, false), m));
-  // landing ring at destination
-  const ringMat = new THREE.MeshBasicMaterial({ color: a === 'HOME' ? 0xffb066 : 0x8fd2ff, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
+  earth.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 180, home ? 0.0105 : 0.0075, 8, false), m));
+  const ringMat = new THREE.MeshBasicMaterial({ color: home ? 0xffb066 : 0x8fd2ff, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
   const ring = new THREE.Mesh(new THREE.RingGeometry(0.026, 0.034, 48), ringMat);
   const P = ll(...getLL(b), R * 1.006); ring.position.copy(P); ring.lookAt(P.clone().multiplyScalar(2));
   earth.add(ring); rings.push({ ring, phase, mult });
-  const dot = new THREE.Mesh(new THREE.CircleGeometry(0.014, 24), new THREE.MeshBasicMaterial({ color: 0xffe2c0, transparent: true, opacity: 0.9, depthWrite: false }));
+  const dot = new THREE.Mesh(new THREE.CircleGeometry(0.013, 24), new THREE.MeshBasicMaterial({ color: 0xffe2c0, transparent: true, opacity: 0.95, depthWrite: false }));
   dot.position.copy(ll(...getLL(b), R * 1.005)); dot.lookAt(dot.position.clone().multiplyScalar(2)); earth.add(dot);
 }
 
 // ---------- home beacon ----------
 const homeP = ll(...HOME, R * 1.006);
 const beacon = new THREE.Group(); beacon.position.copy(homeP); beacon.lookAt(homeP.clone().multiplyScalar(2)); earth.add(beacon);
-beacon.add(new THREE.Mesh(new THREE.CircleGeometry(0.03, 32), new THREE.MeshBasicMaterial({ color: 0xfff1de })));
+beacon.add(new THREE.Mesh(new THREE.CircleGeometry(0.028, 32), new THREE.MeshBasicMaterial({ color: 0xfff1de })));
 const homeRings = [0, 0.5].map((off) => {
   const m = new THREE.Mesh(new THREE.RingGeometry(0.05, 0.062, 64), new THREE.MeshBasicMaterial({ color: 0xffa24a, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide }));
   beacon.add(m); return { m, off };
 });
-{ // light pillar
-  const g = new THREE.CylinderGeometry(0.004, 0.018, 0.55, 16, 1, true); g.translate(0, 0.275, 0); g.rotateX(Math.PI / 2);
+{
+  const g = new THREE.CylinderGeometry(0.003, 0.016, 0.6, 16, 1, true); g.translate(0, 0.3, 0); g.rotateX(Math.PI / 2);
   beacon.add(new THREE.Mesh(g, new THREE.ShaderMaterial({
     transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide,
-    vertexShader: `varying float vH; void main(){ vH = position.z / 0.55; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
-    fragmentShader: `varying float vH; void main(){ gl_FragColor = vec4(vec3(1.0,0.66,0.32) * (1.0 - vH) * 1.6, 1.0); }`,
+    vertexShader: `varying float vH; void main(){ vH = position.z / 0.6; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
+    fragmentShader: `varying float vH; void main(){ gl_FragColor = vec4(vec3(1.0,0.66,0.32) * pow(1.0 - vH, 1.5) * 1.7, 1.0); }`,
   })));
 }
 
-// ---------- orbit ring with satellites ----------
-const orbit = new THREE.Group(); orbit.rotation.set(1.18, 0.0, -0.38); globe.add(orbit);
-orbit.add(new THREE.Mesh(new THREE.TorusGeometry(R * 1.42, 0.0035, 8, 384), new THREE.MeshBasicMaterial({ color: 0x3f7fa3, transparent: true, opacity: 0.45, depthWrite: false })));
+// ---------- satellites on a faint orbit ----------
+const orbit = new THREE.Group(); orbit.rotation.set(1.2, 0.0, -0.36); globe.add(orbit);
+orbit.add(new THREE.Mesh(new THREE.TorusGeometry(R * 1.4, 0.0028, 8, 512), new THREE.MeshBasicMaterial({ color: 0x3f7fa3, transparent: true, opacity: 0.28, depthWrite: false })));
 const sats = new THREE.Group(); orbit.add(sats);
 const NS = 6;
 for (let i = 0; i < NS; i++) {
   const a = (i / NS) * TAU;
-  const s = new THREE.Mesh(new THREE.SphereGeometry(0.022, 16, 12), new THREE.MeshBasicMaterial({ color: 0xcfeaff }));
-  s.position.set(Math.cos(a) * R * 1.42, Math.sin(a) * R * 1.42, 0); sats.add(s);
+  const s = new THREE.Mesh(new THREE.SphereGeometry(0.018, 16, 12), new THREE.MeshBasicMaterial({ color: 0xd8efff }));
+  s.position.set(Math.cos(a) * R * 1.4, Math.sin(a) * R * 1.4, 0); sats.add(s);
 }
 
 // ---------- stars ----------
 const starU = { uTime: { value: 0 } };
 {
-  const pos = [], ph = [], sz = [], k = [];
-  for (let i = 0; i < 1400; i++) {
-    pos.push((rnd() - 0.5) * 60, (rnd() - 0.5) * 22, -18 - rnd() * 20);
-    ph.push(rnd() * TAU); sz.push(0.6 + rnd() * rnd() * 2.6); k.push(1 + Math.floor(rnd() * 3));
+  const pos = [], ph = [], sz = [], k = [], tint = [];
+  for (let i = 0; i < 2600; i++) {
+    pos.push((rnd() - 0.5) * 70, (rnd() - 0.5) * 26, -22 - rnd() * 25);
+    ph.push(rnd() * TAU); sz.push((0.5 + rnd() * rnd() * 2.4) * DPR); k.push(1 + Math.floor(rnd() * 3)); tint.push(rnd());
   }
   const g = new THREE.BufferGeometry();
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute('aPh', new THREE.Float32BufferAttribute(ph, 1));
   g.setAttribute('aSz', new THREE.Float32BufferAttribute(sz, 1));
   g.setAttribute('aK', new THREE.Float32BufferAttribute(k, 1));
+  g.setAttribute('aTint', new THREE.Float32BufferAttribute(tint, 1));
   scene.add(new THREE.Points(g, new THREE.ShaderMaterial({
     uniforms: starU, transparent: true, depthWrite: false,
-    vertexShader: `attribute float aPh; attribute float aSz; attribute float aK; uniform float uTime; varying float vA;
-      void main(){ vA = 0.35 + 0.65 * (0.5 + 0.5 * sin(6.2831853 * aK * uTime / 8.0 + aPh));
+    vertexShader: `attribute float aPh; attribute float aSz; attribute float aK; attribute float aTint; uniform float uTime; varying float vA; varying float vT;
+      void main(){ vA = 0.3 + 0.7 * (0.5 + 0.5 * sin(6.2831853 * aK * uTime / 8.0 + aPh)); vT = aTint;
         gl_PointSize = aSz; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
-    fragmentShader: `varying float vA; void main(){ float d = length(gl_PointCoord - 0.5); if (d > 0.5) discard;
-      gl_FragColor = vec4(vec3(0.75, 0.86, 1.0), vA * smoothstep(0.5, 0.0, d) * 0.8); }`,
+    fragmentShader: `varying float vA; varying float vT; void main(){ float d = length(gl_PointCoord - 0.5); if (d > 0.5) discard;
+      vec3 c = mix(vec3(0.70, 0.82, 1.0), vec3(1.0, 0.86, 0.70), step(0.8, vT));
+      gl_FragColor = vec4(c, vA * smoothstep(0.5, 0.0, d) * 0.75); }`,
   })));
 }
 
-// ---------- post ----------
+// ---------- post: bloom + subtle chromatic aberration ----------
 const composer = new EffectComposer(renderer);
-composer.setPixelRatio(1); composer.setSize(W, H);
+composer.setPixelRatio(DPR); composer.setSize(W, H);
 composer.addPass(new RenderPass(scene, camera));
-const bloom = new UnrealBloomPass(new THREE.Vector2(W, H), 0.8, 0.55, 0.5);
-composer.addPass(bloom);
+composer.addPass(new UnrealBloomPass(new THREE.Vector2(W * DPR, H * DPR), 0.75, 0.5, 0.7));
+composer.addPass(new ShaderPass({
+  uniforms: { tDiffuse: { value: null }, uAmt: { value: 0.0011 } },
+  vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }`,
+  fragmentShader: `uniform sampler2D tDiffuse; uniform float uAmt; varying vec2 vUv;
+    void main(){ vec2 d = (vUv - 0.5) * uAmt * length(vUv - 0.5) * 4.0;
+      gl_FragColor = vec4(texture2D(tDiffuse, vUv + d).r, texture2D(tDiffuse, vUv).g, texture2D(tDiffuse, vUv - d).b, 1.0); }`,
+}));
 composer.addPass(new OutputPass());
+
+// ---------- lens flare layout (DOM, screen-blended) ----------
+const F = (sel) => document.querySelector('#flare ' + sel);
+const place = (el, x, y, s = 1, o = 1) => {
+  const w = el.offsetWidth, h = el.offsetHeight;
+  el.style.transform = `translate(${x - w / 2}px, ${y - h / 2}px) scale(${s})`; el.style.opacity = String(o);
+};
+const ghosts = [
+  { el: F('.g1'), t: 0.55, size: 46, col: 'rgba(120,200,255,.07)' },
+  { el: F('.g2'), t: 0.85, size: 120, col: 'rgba(255,170,90,.04)' },
+  { el: F('.g3'), t: 1.25, size: 70, col: 'rgba(140,255,210,.07)' },
+  { el: F('.g4'), t: 1.6, size: 190, col: 'rgba(120,160,255,.045)' },
+];
+for (const g of ghosts) { g.el.style.width = g.el.style.height = g.size + 'px'; g.el.style.background = `radial-gradient(circle, ${g.col} 0%, ${g.col} 55%, rgba(0,0,0,0) 72%)`; }
+const center = new THREE.Vector2(W * 0.56, H * 0.5);
 
 // ---------- frame ----------
 const nameEl = document.getElementById('name');
@@ -319,41 +318,42 @@ const frac = (x) => x - Math.floor(x);
 
 window.renderAt = (t) => {
   const u = t / T;
-  earth.rotation.set(LAT0 * Math.PI / 180 + 0.025 * Math.sin(TAU * u), -(LON0 * Math.PI / 180) + 0.06 * Math.sin(TAU * u + 0.6), 0, 'XYZ');
+  earth.rotation.set(LAT0 * Math.PI / 180 + 0.02 * Math.sin(TAU * u), -(LON0 * Math.PI / 180) + 0.05 * Math.sin(TAU * u + 0.6), 0, 'XYZ');
+  earthU.uCloudShift.value = 0.0025 * Math.sin(TAU * u);
   sats.rotation.z = TAU * u / NS;
-  dotUniforms.uTime.value = t; starU.uTime.value = t;
-  for (const m of arcMats) {
-    const s = frac(u * m.userData.mult + m.userData.phase);
-    m.uniforms.uHead.value = s * 1.6 - 0.15;
-  }
+  starU.uTime.value = t;
+  for (const m of arcMats) m.uniforms.uHead.value = frac(u * m.userData.mult + m.userData.phase) * 1.6 - 0.15;
   for (const r of rings) {
-    // ring pulses right after the head reaches the destination (head = 1 at s = 0.72)
-    const q = frac(u * r.mult + r.phase - 0.72);
-    const k = q < 0.35 ? q / 0.35 : 1;
-    r.ring.scale.setScalar(1 + k * 3.2);
-    r.ring.material.opacity = q < 0.35 ? (1 - k) * 0.95 : 0;
+    const q = frac(u * r.mult + r.phase - 0.72), k = q < 0.35 ? q / 0.35 : 1;
+    r.ring.scale.setScalar(1 + k * 3.2); r.ring.material.opacity = q < 0.35 ? (1 - k) * 0.95 : 0;
   }
-  for (const h of homeRings) {
-    const q = frac(u * 2 + h.off);
-    h.m.scale.setScalar(1 + q * 3.5);
-    h.m.material.opacity = (1 - q) * 0.9;
-  }
-  // camera breathing
-  camera.position.x = 0.05 * Math.sin(TAU * u);
-  camera.position.y = 0.035 * Math.sin(TAU * u * 1 + 1.3);
+  for (const h of homeRings) { const q = frac(u * 2 + h.off); h.m.scale.setScalar(1 + q * 3.5); h.m.material.opacity = (1 - q) * 0.9; }
+  camera.position.x = 0.04 * Math.sin(TAU * u);
+  camera.position.y = 0.03 * Math.sin(TAU * u + 1.3);
   camera.lookAt(0, 0, 0);
   composer.render();
-  // UI: shimmer sweep across the name during the first 35% of the loop
+  // flare: gentle shimmer, periodic
+  const fl = 1 + 0.035 * Math.sin(TAU * u * 3) + 0.02 * Math.sin(TAU * u * 5 + 1.1);
+  place(F('.f-glow'), sunPx.x, sunPx.y, fl, 1);
+  place(F('.f-core'), sunPx.x, sunPx.y, fl, 1);
+  place(F('.f-streak'), sunPx.x, sunPx.y, 1, 0.9 * fl);
+  place(F('.f-streak2'), sunPx.x, sunPx.y, 1, 0.8);
+  const rays = F('.f-rays'); place(rays, sunPx.x, sunPx.y, fl, 0.85);
+  rays.style.transform += ` rotate(${(360 / 40) * u}deg)`;   // 9deg pattern period -> seamless loop
+  for (const g of ghosts) {
+    const x = sunPx.x + (center.x - sunPx.x) * g.t * 2, y = sunPx.y + (center.y - sunPx.y) * g.t * 2;
+    place(g.el, x, y, 1, 1);
+  }
   const sw = Math.min(1, u / 0.35);
   nameEl.style.backgroundPosition = `${100 - sw * 100}% 0`;
   const pq = frac(u * 4);
-  ringEl.style.transform = `scale(${1 + pq * 1.8})`;
-  ringEl.style.opacity = String((1 - pq) * 0.7);
+  ringEl.style.transform = `scale(${1 + pq * 1.8})`; ringEl.style.opacity = String((1 - pq) * 0.7);
   return true;
 };
 
 await document.fonts.ready;
 window.renderAt(Number(params.get('t') || 0));
+window.__info = { gC: [gC.x, gC.y], gRad, sunPx: [sunPx.x, sunPx.y] };
 window.__ready = true;
 </script>
 </body>
