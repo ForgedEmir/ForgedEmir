@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="320" viewBox="0 0 1200 320" role="img" aria-labelledby="t d">
+  <title id="t">Emir Makhtsaev, Applied AI, Agents and Cloud</title>
+  <desc id="d">Animated banner with a question, retrieve, verify, answer pipeline.</desc>
+  <defs>
+    <pattern id="dots" width="32" height="32" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.2" fill="#dceaf2" opacity="0.10"/>
+    </pattern>
+    <radialGradient id="glow" cx="0.82" cy="0.45" r="0.55">
+      <stop offset="0" stop-color="#cc8a3d" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#cc8a3d" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="thread" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#77a8c3" stop-opacity="0.35"/>
+      <stop offset="0.5" stop-color="#cc8a3d"/>
+      <stop offset="1" stop-color="#77a8c3" stop-opacity="0.45"/>
+    </linearGradient>
+    <linearGradient id="sweep" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#cc8a3d" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#e3a862" stop-opacity="1"/>
+      <stop offset="1" stop-color="#cc8a3d" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="type"><rect x="64" y="176" height="44" width="410">
+      <animate attributeName="width" values="0;0;410" keyTimes="0;0.25;1" dur="2.8s" begin="0s" fill="freeze"/>
+    </rect></clipPath>
+    <clipPath id="frame"><rect width="1200" height="320" rx="20"/></clipPath>
+    <path id="route" d="M700 214 C760 214 780 118 840 118 S920 206 980 206 S1060 110 1112 110"/>
+  </defs>
+  <g clip-path="url(#frame)">
+    <rect width="1200" height="320" fill="#0b1f2e"/>
+    <rect width="1200" height="320" fill="url(#dots)"/>
+    <rect width="1200" height="320" fill="url(#glow)"/>
+    <rect x="-300" y="0" width="300" height="3" fill="url(#sweep)">
+      <animate attributeName="x" from="-300" to="1200" dur="5s" repeatCount="indefinite"/>
+    </rect>
+  </g>
+  <rect x="0.5" y="0.5" width="1199" height="319" rx="20" fill="none" stroke="#1d3a4f"/>
+
+  <!-- left: identity -->
+  <text x="64" y="78" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="14" letter-spacing="3.5" fill="#a9c4d3">APPLIED AI · AGENTS · CLOUD</text>
+  <text x="62" y="148" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="62" font-weight="700" fill="#f2f6f8" letter-spacing="-0.5">Emir Makhtsaev</text>
+  <g clip-path="url(#type)">
+    <text x="64" y="206" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="27" fill="#e3a862">I build AI systems you can trust.</text>
+  </g>
+  <rect x="64" y="182" width="3" height="30" fill="#e3a862" opacity="0">
+    <animate attributeName="x" values="64;64;478" keyTimes="0;0.25;1" dur="2.8s" begin="0s" fill="freeze"/>
+    <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.01;0.5;0.51" dur="1s" begin="0.6s" repeatCount="indefinite"/>
+  </rect>
+
+  <!-- status pill -->
+  <g transform="translate(64 244)">
+    <rect width="372" height="38" rx="19" fill="#0f2a3d" stroke="#1d3a4f"/>
+    <circle cx="22" cy="19" r="9" fill="#5fd39a" opacity="0.25">
+      <animate attributeName="r" values="5;11;5" dur="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.45;0;0.45" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="22" cy="19" r="5" fill="#5fd39a"/>
+    <text x="40" y="24.5" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="15" fill="#f2f6f8">Open to a 6-month internship · 2027</text>
+  </g>
+
+  <!-- right: pipeline -->
+  <use href="#route" fill="none" stroke="url(#thread)" stroke-width="2.5" opacity="0.55"/>
+  <use href="#route" fill="none" stroke="#cc8a3d" stroke-width="2.5" stroke-dasharray="6 10" opacity="0.9">
+    <animate attributeName="stroke-dashoffset" from="64" to="0" dur="1.6s" repeatCount="indefinite"/>
+  </use>
+  
+    <circle cx="700" cy="214" r="22" fill="#cc8a3d" opacity="0">
+      <animate attributeName="opacity" dur="4.8s" repeatCount="indefinite" keyTimes="0;0.14;1" values="0.22;0.00;0.00"/>
+      <animate attributeName="r" dur="4.8s" repeatCount="indefinite" keyTimes="0;0.14;1" values="28;14;14"/>
+    </circle>
+    <circle cx="700" cy="214" r="9" fill="#0b1f2e" stroke="#cc8a3d" stroke-width="3"/>
+    <circle cx="700" cy="214" r="3.5" fill="#e3a862">
+      <animate attributeName="opacity" dur="4.8s" repeatCount="indefinite" keyTimes="0;0.14;1" values="1.00;0.35;0.35"/>
+    </circle>
+    <text x="700" y="260" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12" letter-spacing="2.5" fill="#a9c4d3">QUESTION</text>
+    <circle cx="840" cy="118" r="22" fill="#cc8a3d" opacity="0">
+      <animate attributeName="opacity" dur="4.8s" repeatCount="indefinite" keyTimes="0;0.31;0.33;0.47;1" values="0.00;0.00;0.22;0.00;0.00"/>
+      <animate attributeName="r" dur="4.8s" repeatCount="indefinite" keyTimes="0;0.31;0.33;0.47;1" values="14;14;28;14;14"/>
+    </circle>
+    <circle cx="840" cy="118" r="9" fill="#0b1f2e" stroke="#cc8a3d" stroke-width="3"/>
+    <circle cx="840" cy="118" r="3.5" fill="#e3a862">
+      <animate attributeName="opacity" dur="4.8s" repeatCount="indefinite" keyTimes="0;0.31;0.33;0.47;1" values="0.35;0.35;1.00;0.35;0.35"/>
+    </circle>
+    <text x="840" y="86" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12" letter-spacing="2.5" fill="#a9c4d3">RETRIEVE</text>
+    <circle cx="980" cy="206" r="22" fill="#cc8a3d" opacity="0">
+      <animate attributeName="opacity" dur="4.8s" repeatCount="indefinite" keyTimes="0;0.65;0.67;0.81;1" values="0.00;0.00;0.22;0.00;0.00"/>
+      <animate attributeName="r" dur="4.8s" repeatCount="indefinite" keyTimes="0;0.65;0.67;0.81;1" values="14;14;28;14;14"/>
+    </circle>
+    <circle cx="980" cy="206" r="9" fill="#0b1f2e" stroke="#cc8a3d" stroke-width="3"/>
+    <circle cx="980" cy="206" r="3.5" fill="#e3a862">
+      <animate attributeName="opacity" dur="4.8s" repeatCount="indefinite" keyTimes="0;0.65;0.67;0.81;1" values="0.35;0.35;1.00;0.35;0.35"/>
+    </circle>
+    <text x="980" y="252" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12" letter-spacing="2.5" fill="#a9c4d3">VERIFY</text>
+    <circle cx="1112" cy="110" r="22" fill="#cc8a3d" opacity="0">
+      <animate attributeName="opacity" dur="4.8s" repeatCount="indefinite" keyTimes="0;0.86;0.98;1" values="0.00;0.00;0.22;0.22"/>
+      <animate attributeName="r" dur="4.8s" repeatCount="indefinite" keyTimes="0;0.86;0.98;1" values="14;14;28;28"/>
+    </circle>
+    <circle cx="1112" cy="110" r="9" fill="#0b1f2e" stroke="#cc8a3d" stroke-width="3"/>
+    <circle cx="1112" cy="110" r="3.5" fill="#e3a862">
+      <animate attributeName="opacity" dur="4.8s" repeatCount="indefinite" keyTimes="0;0.86;0.98;1" values="0.35;0.35;1.00;1.00"/>
+    </circle>
+    <text x="1112" y="78" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace" font-size="12" letter-spacing="2.5" fill="#a9c4d3">ANSWER</text>
+  <circle r="6" fill="#e3a862">
+    <animateMotion dur="4.8s" repeatCount="indefinite"><mpath href="#route"/></animateMotion>
+  </circle>
+  <circle r="14" fill="#e3a862" opacity="0.18">
+    <animateMotion dur="4.8s" repeatCount="indefinite"><mpath href="#route"/></animateMotion>
+  </circle>
+</svg>

@@ -1,58 +1,67 @@
 <p align="center">
+  <img src="assets/banner.svg" width="100%" alt="Emir Makhtsaev · Applied AI, Agents and Cloud">
+</p>
+
+<p align="center">
+  <a href="https://www.linkedin.com/in/emir-makhtsaev-0b97283a0/"><img src="https://img.shields.io/badge/LinkedIn-Emir_Makhtsaev-0b1f2e?style=for-the-badge&logo=linkedin&logoColor=77a8c3" alt="LinkedIn"></a>
+  <img src="https://img.shields.io/badge/Based_in-Liège,_Belgium-0b1f2e?style=for-the-badge" alt="Based in Liège, Belgium">
+  <img src="https://img.shields.io/badge/Speaks-FR_·_EN_·_RU-0b1f2e?style=for-the-badge" alt="Speaks French, English and Russian">
+</p>
+
+<br>
+
+```python
+emir = {
+    "studying":    "BSc Computer Science, AI track @ HELMo (Liège)",
+    "building":    ["RAG platforms", "AI agents", "data pipelines"],
+    "next":        "Cloud certification, before 2027",
+    "looking_for": "6-month internship in cloud & AI, early 2027",
+}
+```
+
+## Featured work
+
+<table>
+  <tr>
+    <td width="50%"><a href="https://github.com/ForgedEmir/RAG"><img src="assets/card-rag.svg" width="100%" alt="Accounting RAG Platform"></a></td>
+    <td width="50%"><a href="https://github.com/ForgedEmir/PARALLAX"><img src="assets/card-parallax.svg" width="100%" alt="PARALLAX, Hermes x NVIDIA x Stripe Hackathon 2026"></a></td>
+  </tr>
+  <tr>
+    <td width="50%"><a href="https://github.com/ForgedEmir/neuro-spark"><img src="assets/card-neurospark.svg" width="100%" alt="NeuroSpark, distributed EEG pipeline"></a></td>
+    <td width="50%"><a href="https://github.com/ForgedEmir/CarWatch"><img src="assets/card-carwatch.svg" width="100%" alt="CarWatch, real-time used-car alerts"></a></td>
+  </tr>
+</table>
+
+## How I build
+
+| | Principle | Where it shows |
+|:-:|---|---|
+| `01` | **Every answer has a source.** | The RAG platform answers from retrieved passages and cites them. |
+| `02` | **The model perceives, rules decide.** | In PARALLAX, the AI never releases a workflow on its own. |
+| `03` | **Reproducible or it didn't happen.** | NeuroSpark versions its data with DVC and tracks every run in MLflow. |
+| `04` | **Every loop has a budget.** | My research agents run with hard limits on cost, requests and time. |
+
+## Toolbox
+
+<p>
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/header-dark.svg">
-    <img src="assets/header-light.svg" width="100%" alt="Emir — Evidence Ledger">
+    <source media="(prefers-color-scheme: light)" srcset="https://skillicons.dev/icons?i=python,fastapi,docker,postgres,redis,supabase,linux,ts,react,git,githubactions&theme=light">
+    <img src="https://skillicons.dev/icons?i=python,fastapi,docker,postgres,redis,supabase,linux,ts,react,git,githubactions&theme=dark" alt="Python, FastAPI, Docker, PostgreSQL, Redis, Supabase, Linux, TypeScript, React, Git, GitHub Actions">
   </picture>
 </p>
 
-<h1 align="center">Evidence before confidence.</h1>
-
-<p align="center">
-  From applied ML and retrieval systems to evidence-first agents.<br>
-  I’m currently exploring how memory, tools, skills and evaluation can make agentic systems more reliable.
+<p>
+  <img src="https://img.shields.io/badge/PySpark-0b1f2e?style=flat-square&logo=apachespark&logoColor=E25A1C" alt="PySpark">
+  <img src="https://img.shields.io/badge/MLflow-0b1f2e?style=flat-square&logo=mlflow&logoColor=0194E2" alt="MLflow">
+  <img src="https://img.shields.io/badge/DVC-0b1f2e?style=flat-square&logo=dvc&logoColor=13ADC7" alt="DVC">
+  <img src="https://img.shields.io/badge/Qdrant-0b1f2e?style=flat-square" alt="Qdrant">
+  <img src="https://img.shields.io/badge/MCP-0b1f2e?style=flat-square" alt="Model Context Protocol">
+  <img src="https://img.shields.io/badge/Hermes_Agent-0b1f2e?style=flat-square" alt="Hermes Agent">
+  <img src="https://img.shields.io/badge/n8n-0b1f2e?style=flat-square&logo=n8n&logoColor=EA4B71" alt="n8n">
 </p>
 
-## Evidence ledger
-
-| System | Public evidence | Status |
-|---|---|---|
-| **[RAG](https://github.com/ForgedEmir/RAG)** | Release, source code and documentation | Implemented |
-| **[neuro-spark](https://github.com/ForgedEmir/neuro-spark)** | Pipeline, tests and DVC workflow | Academic project |
-| **[diabetes-scan](https://github.com/ForgedEmir/diabetes-scan)** | Notebooks, reports and evaluation | Academic project |
-| **[SourceLoom](https://github.com/ForgedEmir/SourceLoom)** | Architecture and decision records | Design phase |
-
-## Selected work
-
-- **[RAG](https://github.com/ForgedEmir/RAG)** — Hybrid retrieval for accounting-oriented documents, with SSE streaming, multi-user authentication, semantic caching and an MCP server.
-- **[neuro-spark](https://github.com/ForgedEmir/neuro-spark)** — Distributed EEG motor-imagery processing with PySpark, frequency-band decomposition and MLlib classification.
-- **[diabetes-scan](https://github.com/ForgedEmir/diabetes-scan)** — Early-stage diabetes risk prediction using nested cross-validation, SHAP explanations and fairness evaluation.
-- **[CarWatch](https://github.com/ForgedEmir/CarWatch)** — Parallel Belgian used-car monitoring, deal scoring and Telegram alerts.
-- **[peppol-prospector](https://github.com/ForgedEmir/peppol-prospector)** — CBE and Peppol directory cross-referencing for Belgian company research.
-
-## Now investigating
-
-**[SourceLoom — Adaptive Deep Research Engine](https://github.com/ForgedEmir/SourceLoom)** is currently in its foundation phase. The research question is whether explicit evidence gaps can drive better follow-up queries than a naive multi-provider merge.
-
-- Evidence graphs and contradiction detection
-- Bounded agent loops with explicit stopping rules
-- Reproducible evaluation of memory, tools and skills
-
-<details>
-<summary><strong>How I evaluate an experiment</strong></summary>
 <br>
 
-1. Establish a reproducible baseline.
-2. Define the budget, timeout and stopping conditions.
-3. Run a small validation before a full benchmark.
-4. Compare quality, cost and failure modes.
-5. Publish limitations; “unknown” remains a valid result.
-
-</details>
-
-## Working principle
-
-> Test before claiming. Bound every loop. Treat every concrete number as a hypothesis until its source is verified.
-
 <p align="center">
-  Student in Belgium · Python · Applied AI · Agent evaluation
+  <sub>Final year @ HELMo · Open to internships for 2027 · Let's talk on <a href="https://www.linkedin.com/in/emir-makhtsaev-0b97283a0/">LinkedIn</a></sub>
 </p>
