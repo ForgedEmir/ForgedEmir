@@ -24,7 +24,7 @@
 ## How I build
 
 <p align="center">
-  <img src="assets/principles.webp" width="100%" alt="01 Every answer has a source. 02 The model perceives, rules decide. 03 Reproducible or it didn't happen. 04 Every loop has a budget.">
+  <img src="assets/principles-v2.webp" width="100%" alt="01 Every answer has a source. 02 The model perceives, rules decide. 03 Reproducible or it didn't happen. 04 Every loop has a budget.">
 </p>
 
 ## Toolbox
