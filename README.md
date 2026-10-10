@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/banner-sunrise.webp" width="100%" alt="Emir Makhtsaev · Applied AI, Agents and Cloud. Sunrise over Earth at night, with data flowing from Liège to the world.">
+  <img src="assets/hero.webp" width="100%" alt="Emir Makhtsaev · Applied AI, Agents and Cloud. Sunrise over Earth at night, with data flowing from Liège to the world.">
 </p>
 
 <p align="center">
@@ -8,60 +8,31 @@
   <img src="https://img.shields.io/badge/Speaks-FR_·_EN_·_RU-0b1f2e?style=for-the-badge" alt="Speaks French, English and Russian">
 </p>
 
-<br>
-
-```python
-emir = {
-    "studying":    "BSc Computer Science, AI track @ HELMo (Liège)",
-    "building":    ["RAG platforms", "AI agents", "data pipelines"],
-    "next":        "Cloud certification, before 2027",
-    "looking_for": "6-month internship in cloud & AI, early 2027",
-}
-```
+<p align="center">
+  <img src="assets/terminal.webp" width="100%" alt="whoami: Emir Makhtsaev, final-year AI student at HELMo, Liège. Focus: AI agents that solve real business problems, RAG assistants that cite their sources, data pipelines you can reproduce. Open to a 6-month internship in cloud and AI, 2027.">
+</p>
 
 ## Featured work
 
-<table>
-  <tr>
-    <td width="50%"><a href="https://github.com/ForgedEmir/RAG"><img src="assets/card-rag.svg" width="100%" alt="Accounting RAG Platform"></a></td>
-    <td width="50%"><a href="https://github.com/ForgedEmir/PARALLAX"><img src="assets/card-parallax.svg" width="100%" alt="PARALLAX, Hermes x NVIDIA x Stripe Hackathon 2026"></a></td>
-  </tr>
-  <tr>
-    <td width="50%"><a href="https://github.com/ForgedEmir/neuro-spark"><img src="assets/card-neurospark.svg" width="100%" alt="NeuroSpark, distributed EEG pipeline"></a></td>
-    <td width="50%"><a href="https://github.com/ForgedEmir/CarWatch"><img src="assets/card-carwatch.svg" width="100%" alt="CarWatch, real-time used-car alerts"></a></td>
-  </tr>
-</table>
+<p align="center">
+  <a href="https://github.com/ForgedEmir/RAG"><img src="assets/card-rag.webp" width="49%" alt="Accounting RAG: sourced answers on tax law, accounting standards and Peppol, streamed in real time. Team project, main contributor."></a>
+  <a href="https://github.com/ForgedEmir/PARALLAX"><img src="assets/card-parallax.webp" width="49%" alt="PARALLAX, Hermes x NVIDIA x Stripe Hackathon 2026: AI agents must prove the physical world matches the plan before a workflow continues."></a>
+  <a href="https://github.com/ForgedEmir/neuro-spark"><img src="assets/card-neuro.webp" width="49%" alt="NeuroSpark: distributed EEG pipeline with PySpark, MLflow and DVC, 109 subjects and 1,308 files."></a>
+  <a href="https://github.com/ForgedEmir/CarWatch"><img src="assets/card-carwatch.webp" width="49%" alt="CarWatch: watches three Belgian car marketplaces in parallel, scores every deal and sends instant alerts."></a>
+</p>
 
 ## How I build
 
-| | Principle | Where it shows |
-|:-:|---|---|
-| `01` | **Every answer has a source.** | The RAG platform answers from retrieved passages and cites them. |
-| `02` | **The model perceives, rules decide.** | In PARALLAX, the AI never releases a workflow on its own. |
-| `03` | **Reproducible or it didn't happen.** | NeuroSpark versions its data with DVC and tracks every run in MLflow. |
-| `04` | **Every loop has a budget.** | My research agents run with hard limits on cost, requests and time. |
+<p align="center">
+  <img src="assets/principles.webp" width="100%" alt="01 Every answer has a source. 02 The model perceives, rules decide. 03 Reproducible or it didn't happen. 04 Every loop has a budget.">
+</p>
 
 ## Toolbox
 
-<p>
-  <picture>
-    <source media="(prefers-color-scheme: light)" srcset="https://skillicons.dev/icons?i=python,fastapi,docker,postgres,redis,supabase,linux,ts,react,git,githubactions&theme=light">
-    <img src="https://skillicons.dev/icons?i=python,fastapi,docker,postgres,redis,supabase,linux,ts,react,git,githubactions&theme=dark" alt="Python, FastAPI, Docker, PostgreSQL, Redis, Supabase, Linux, TypeScript, React, Git, GitHub Actions">
-  </picture>
+<p align="center">
+  <img src="assets/toolbox.webp" width="100%" alt="AI and agents: MCP, Hermes Agent, n8n, Claude Code. Data and ML: Python, PySpark, MLflow, DVC, PostgreSQL. Build: FastAPI, TypeScript, React, Git, GitHub Actions. Cloud and ops: Docker, Linux, Redis, Supabase, Railway.">
 </p>
-
-<p>
-  <img src="https://img.shields.io/badge/PySpark-0b1f2e?style=flat-square&logo=apachespark&logoColor=E25A1C" alt="PySpark">
-  <img src="https://img.shields.io/badge/MLflow-0b1f2e?style=flat-square&logo=mlflow&logoColor=0194E2" alt="MLflow">
-  <img src="https://img.shields.io/badge/DVC-0b1f2e?style=flat-square&logo=dvc&logoColor=13ADC7" alt="DVC">
-  <img src="https://img.shields.io/badge/Qdrant-0b1f2e?style=flat-square" alt="Qdrant">
-  <img src="https://img.shields.io/badge/MCP-0b1f2e?style=flat-square" alt="Model Context Protocol">
-  <img src="https://img.shields.io/badge/Hermes_Agent-0b1f2e?style=flat-square" alt="Hermes Agent">
-  <img src="https://img.shields.io/badge/n8n-0b1f2e?style=flat-square&logo=n8n&logoColor=EA4B71" alt="n8n">
-</p>
-
-<br>
 
 <p align="center">
-  <sub>Banner rendered frame by frame with <a href="banner/">Three.js</a> · Final year @ HELMo · Open to internships for 2027 · Let's talk on <a href="https://www.linkedin.com/in/emir-makhtsaev-0b97283a0/">LinkedIn</a></sub>
+  <sub>Every visual on this page is rendered frame by frame with <a href="render/">Three.js and Canvas</a> · Final year @ HELMo · Open to internships for 2027 · Let's talk on <a href="https://www.linkedin.com/in/emir-makhtsaev-0b97283a0/">LinkedIn</a></sub>
 </p>
